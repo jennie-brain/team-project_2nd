@@ -35,18 +35,18 @@
 | 팀장·통합 PM | 회의 진행, 범위·일정 관리, Decision Log, 파일·링크·최종 제출 상태 관리 | 효진 |
 | PRD·검증·문서화 | Value Proposition, 요구사항, Acceptance Criteria, KPI와 발표 스토리 통합 | 효진 |
 
-> 역할 분담은 독립 작업을 위한 구획이며, 주요 가설과 결정은 팀 전체가 함께 검토합니다. 배정 근거는 [`Decision_Log.md`](./Decision_Log.md) 참고.
+> 역할 분담은 독립 작업을 위한 구획이며, 주요 가설과 결정은 팀 전체가 함께 검토합니다. 배정 근거는 [`decision-log/decision-log.md`](./decision-log/decision-log.md) 참고.
 
 ## 폴더 구조
 
 ```
 2nd team project/
-├── README.md         # 프로젝트 개요 (이 파일)
-├── 방법론.md          # 역기획 핵심 방법론 정리
-├── Decision_Log.md   # 주요 결정 기록
-├── 가람/              # 개인 자료 보관 폴더
-├── 윤정/              # 개인 자료 보관 폴더
-└── 효진/              # 개인 자료 보관 폴더
+├── README.md                    # 프로젝트 개요 (이 파일)
+├── 방법론.md                     # 역기획 핵심 방법론 정리
+├── decision-log/decision-log.md # 주요 결정 기록
+├── 가람/                         # 개인 자료 보관 폴더
+├── 윤정/                         # 개인 자료 보관 폴더
+└── 효진/                         # 개인 자료 보관 폴더
 ```
 
 > `프로젝트 가이드.html`(원본 오프닝 가이드)은 로컬에만 보관하고 저장소에는 올리지 않습니다.
@@ -84,7 +84,7 @@
 
 - **공유채널** — 공지, 질문, 당일 목표, 완료 보고
 - **공용 문서** — Master Deck과 최신 분석 결과
-- **Decision Log** — 후보, 근거, 결정, 변경 이유, 담당자, 재검토 조건
+- **Decision Log** — 후보, 근거, 결정, 변경 이유, 담당자, 재검토 조건 ([`decision-log/decision-log.md`](./decision-log/decision-log.md))
 
 ## 최종 제출 패키지
 
