@@ -41,12 +41,15 @@
 
 ```
 2nd team project/
-├── README.md                    # 프로젝트 개요 (이 파일)
-├── 방법론.md                     # 역기획 핵심 방법론 정리
-├── decision-log/decision-log.md # 주요 결정 기록
-├── 가람/                         # 개인 자료 보관 폴더
-├── 윤정/                         # 개인 자료 보관 폴더
-└── 효진/                         # 개인 자료 보관 폴더
+├── README.md                       # 프로젝트 개요 (이 파일)
+├── 방법론.md                        # 역기획 핵심 방법론 정리
+├── decision-log/decision-log.md    # 주요 결정 기록
+├── ai-usage-log/                   # AI 활용 로그
+│   ├── methodology.md              #   작성 방법론·컬럼 가이드
+│   └── ai-usage-log.md             #   실제 로그 (표 맨 아래에 누적)
+├── 가람/                            # 개인 자료 보관 폴더
+├── 윤정/                            # 개인 자료 보관 폴더
+└── 효진/                            # 개인 자료 보관 폴더
 ```
 
 > `프로젝트 가이드.html`(원본 오프닝 가이드)은 로컬에만 보관하고 저장소에는 올리지 않습니다.
@@ -94,6 +97,8 @@
 ├── 02_Evidence_Analysis_Workbook.xlsx        # 9개 방법론 상세표·근거
 └── 03_Decision_AI_Usage_Log.xlsx             # 결정 이력·AI 활용 로그
 ```
+
+> 결정 이력은 [`decision-log/decision-log.md`](./decision-log/decision-log.md), AI 활용 로그는 [`ai-usage-log/ai-usage-log.md`](./ai-usage-log/ai-usage-log.md)에 지금부터 누적해 두면 제출 직전 새로 만들 필요 없이 그대로 변환하면 됩니다.
 
 ## 평가 기준 (100점)
 
