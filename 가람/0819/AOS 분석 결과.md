@@ -1,6 +1,6 @@
 # AOS 분석 결과 — 미래지출 결제설계 서비스
 
-> `가람/0819_시장기회 분석 방법론(AOS).md`의 절차를 실제로 실행한 결과입니다. 원래 별도 문서였던 Pain Point–Goal 매트릭스(입력 자료)를 실제 작업 순서대로 이 문서 맨 앞에 통합했습니다 — **0. Pain Point–Goal 매트릭스(입력) → 1. 후보 확정 → 2. Importance → 3. Satisfaction → 4. AOS 계산 → 5. Matrix 배치 → 6. 결론** 순서로 읽으면 됩니다.
+> `가람/0819/시장기회 분석 방법론(AOS).md`의 절차를 실제로 실행한 결과입니다. 원래 별도 문서였던 Pain Point–Goal 매트릭스(입력 자료)를 실제 작업 순서대로 이 문서 맨 앞에 통합했습니다 — **0. Pain Point–Goal 매트릭스(입력) → 1. 후보 확정 → 2. Importance → 3. Satisfaction → 4. AOS 계산 → 5. Matrix 배치 → 6. 결론** 순서로 읽으면 됩니다.
 >
 > **공식**: `AOS = Importance × (1 − Satisfaction/5)` · **사분면 기준점**: Importance·Satisfaction 각각 **중앙값(median)** 사용(요청 반영)
 
@@ -8,7 +8,7 @@
 
 ## 0. Pain Point–Goal 매트릭스 (입력 자료)
 
-`가람/0819_고객 여정지도.md` 1~14절 각 인물의 CJM 표에서 "없음"을 제외하고 뽑은 12명 대표 Pain Point(각 3개씩)에, **페르소나 전체 Goal** 열과 **Pain Point별 개별 Goal 추론**을 더한 자료입니다. 각 Pain Point 뒤의 "→ *Goal:*"은 그 Pain을 해소했을 때 충족되는 개별 목표를 추론한 것입니다. 1절부터는 이 중 **Core+Adjacent 8명**(24건)만 1차 채점 대상으로 씁니다.
+`가람/0819/고객 여정지도.md` 1~14절 각 인물의 CJM 표에서 "없음"을 제외하고 뽑은 12명 대표 Pain Point(각 3개씩)에, **페르소나 전체 Goal** 열과 **Pain Point별 개별 Goal 추론**을 더한 자료입니다. 각 Pain Point 뒤의 "→ *Goal:*"은 그 Pain을 해소했을 때 충족되는 개별 목표를 추론한 것입니다. 1절부터는 이 중 **Core+Adjacent 8명**(24건)만 1차 채점 대상으로 씁니다.
 
 ### Core
 
@@ -135,7 +135,7 @@ flowchart TD
     classDef q4 fill:#FFE0B2,stroke:#E65100,stroke-width:1.5px;
 ```
 
-> `quadrantChart` 문법이 GitHub에서 렌더링되지 않아, 이미 검증된 `flowchart` 서브그래프 방식(`가람/0819_시장기회 분석 방법론(AOS).md` 1절과 동일 스타일)으로 교체했습니다. 4·5절의 표가 동일한 정보를 담은 대체 형태이기도 합니다.
+> `quadrantChart` 문법이 GitHub에서 렌더링되지 않아, 이미 검증된 `flowchart` 서브그래프 방식(`가람/0819/시장기회 분석 방법론(AOS).md` 1절과 동일 스타일)으로 교체했습니다. 4·5절의 표가 동일한 정보를 담은 대체 형태이기도 합니다.
 
 ---
 
@@ -151,4 +151,4 @@ flowchart TD
 
 ---
 
-**연결 문서**: `가람/0819_시장기회 분석 방법론(AOS).md` · `가람/0819_Evidence Log.md` · `가람/0819_고객 여정지도.md` · `가람/0819_JTBD 분석 방법론.md` · `가람/0819_DOS 분석 방법론.md` · `가람/0819_페르소나 스펙트럼 분석 보고서.md`(페르소나 Goal 원본)
+**연결 문서**: `가람/0819/시장기회 분석 방법론(AOS).md` · `가람/0819/Evidence Log.md` · `가람/0819/고객 여정지도.md` · `가람/0819/JTBD 분석 방법론.md` · `가람/0819/DOS 분석 방법론.md` · `가람/0819/페르소나 스펙트럼 분석 보고서.md`(페르소나 Goal 원본)
