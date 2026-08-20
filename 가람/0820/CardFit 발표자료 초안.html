@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CardFit PRD v0.1 · 미래지출 결제설계</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Pretendard','-apple-system','BlinkMacSystemFont','system-ui','sans-serif'] },
+      colors: {
+        brand:   { blue: '#3182F6', deep: '#0064FF' },
+        ink:     { 900: '#101318', 800: '#191F28', 700: '#202632' },
+        g: {
+          50:'#F9FAFB',100:'#F2F4F6',200:'#E5E8EB',300:'#D1D6DB',400:'#B0B8C1',
+          500:'#8B95A1',600:'#6B7684',700:'#4E5968',800:'#333D4B',900:'#191F28'
+        }
+      },
+      borderRadius: { xl2:'20px', xl3:'24px' },
+      boxShadow: {
+        card: '0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.05)',
+        cardhover: '0 2px 6px rgba(0,0,0,0.06), 0 16px 40px rgba(0,0,0,0.09)',
+        blue: '0 8px 24px rgba(49,130,246,0.28)'
+      }
+    }
+  }
+}
+</script>
+<style>
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{transition:none!important;animation:none!important} }
+  body{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility }
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease}
+  .reveal.in{opacity:1; transform:none}
+  /* accordion */
+  .acc-body{max-height:0; overflow:hidden; transition:max-height .34s ease}
+  .acc.open .acc-body{max-height:1200px}
+  .acc.open .acc-chev{transform:rotate(180deg)}
+  .grid-dot{background-image:radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px); background-size:22px 22px}
+  ::selection{background:#3182F6; color:#fff}
+</style>
+</head>
+
+<body class="bg-g-50 text-g-900 font-sans antialiased">
+
+<!-- ============ NAV ============ -->
+<header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-g-200">
+  <div class="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-2 font-bold tracking-tight">
+      <span class="inline-grid place-items-center w-7 h-7 rounded-lg bg-brand-blue text-white text-sm">C</span>
+      <span>CardFit</span>
+      <span class="hidden sm:inline text-g-400 font-medium text-sm">PRD v0.1</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-1 text-sm text-g-600 font-medium">
+      <a href="#problem"  class="px-3 py-1.5 rounded-lg hover:bg-g-100 hover:text-g-900 transition">문제</a>
+      <a href="#goal"     class="px-3 py-1.5 rounded-lg hover:bg-g-100 hover:text-g-900 transition">목표·지표</a>
+      <a href="#persona"  class="px-3 py-1.5 rounded-lg hover:bg-g-100 hover:text-g-900 transition">페르소나</a>
+      <a href="#journey"  class="px-3 py-1.5 rounded-lg hover:bg-g-100 hover:text-g-900 transition">여정</a>
+      <a href="#story"    class="px-3 py-1.5 rounded-lg hover:bg-g-100 hover:text-g-900 transition">스토리</a>
+      <a href="#feature"  class="px-3 py-1.5 rounded-lg hover:bg-g-100 hover:text-g-900 transition">기능</a>
+      <a href="#voice"    class="px-3 py-1.5 rounded-lg hover:bg-g-100 hover:text-g-900 transition">고객의 목소리</a>
+      <a href="#risk"     class="px-3 py-1.5 rounded-lg hover:bg-g-100 hover:text-g-900 transition">리스크</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO (DARK) ============ -->
+<section id="top" class="relative bg-ink-900 text-white overflow-hidden">
+  <div class="absolute inset-0 grid-dot"></div>
+  <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-brand-blue/25 blur-3xl"></div>
+  <div class="absolute bottom-0 -left-20 w-80 h-80 rounded-full bg-brand-deep/20 blur-3xl"></div>
+
+  <div class="relative max-w-6xl mx-auto px-5 pt-20 pb-24">
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs font-medium text-white/80 mb-7">
+      <span class="w-1.5 h-1.5 rounded-full bg-brand-blue animate-pulse"></span>
+      CardFit · Product Requirements v0.1 · 2026-08-20
+    </div>
+
+    <h1 class="text-4xl sm:text-6xl font-extrabold leading-[1.1] tracking-tight max-w-4xl">
+      미래 지출까지 계산해,<br/>
+      <span class="text-brand-blue">놓치는 혜택 없이.</span>
+    </h1>
+
+    <p class="mt-6 text-lg sm:text-xl text-white/70 leading-relaxed max-w-2xl">
+      마이데이터로 과거 소비·보유카드를 자동 수집하고, 곧 바뀔 미래 지출을 카드 혜택과
+      자동으로 연결해 <span class="text-white font-semibold">순혜택 기준 최적 카드 조합</span>을 제시합니다.
+      계산 근거는 항목별로 투명하게 공개합니다.
+    </p>
+
+    <!-- key evidence chips -->
+    <div class="mt-10 grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-4xl">
+      <div class="rounded-xl2 bg-white/[0.06] border border-white/10 p-5">
+        <div class="text-3xl font-extrabold text-white">0<span class="text-base text-white/50">/6곳</span></div>
+        <div class="mt-1 text-sm text-white/60">경쟁 6곳 중 미래소비 반영 <span class="text-[#5AA2FF]">🔵</span></div>
+      </div>
+      <div class="rounded-xl2 bg-white/[0.06] border border-white/10 p-5">
+        <div class="text-3xl font-extrabold text-white">+88.4<span class="text-base text-white/50">%</span></div>
+        <div class="mt-1 text-sm text-white/60">신용카드 민원 ’22→’25 <span class="text-[#5AA2FF]">🔵</span></div>
+      </div>
+      <div class="rounded-xl2 bg-white/[0.06] border border-white/10 p-5">
+        <div class="text-3xl font-extrabold text-white">≥ 40<span class="text-base text-white/50">%</span></div>
+        <div class="mt-1 text-sm text-white/60">북극성 · Payment Plan 선택률</div>
+      </div>
+      <div class="rounded-xl2 bg-white/[0.06] border border-white/10 p-5">
+        <div class="text-3xl font-extrabold text-white">A·C</div>
+        <div class="mt-1 text-sm text-white/60">AOS·DOS 공동 1순위 Job</div>
+      </div>
+    </div>
+
+    <div class="mt-9 flex flex-wrap items-center gap-3">
+      <a href="#problem" class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-brand-blue hover:bg-brand-deep transition font-semibold shadow-blue">
+        문제부터 보기
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M12 19l-6-6M12 19l6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <span class="text-sm text-white/50">Owner · 카드핏 프로덕트팀 (초안: 가람 — 고객분석)</span>
+    </div>
+  </div>
+
+  <!-- legend -->
+  <div class="relative border-t border-white/10 bg-black/20">
+    <div class="max-w-6xl mx-auto px-5 py-3 flex flex-wrap items-center gap-x-6 gap-y-1.5 text-xs text-white/55">
+      <span class="font-semibold text-white/75">근거 등급</span>
+      <span>🔵 공개 지표·검증</span>
+      <span>🟡 팀 추정</span>
+      <span>🟠 미측정</span>
+    </div>
+  </div>
+</section>
+
+<main class="max-w-6xl mx-auto px-5">
+
+<!-- ============ PROBLEM ============ -->
+<section id="problem" class="pt-20 pb-4 reveal">
+  <div class="max-w-2xl">
+    <p class="text-brand-blue font-bold text-sm mb-2">01 · Problem</p>
+    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">스스로 계산할 수 없고, 계산해도 실행되지 않는다</h2>
+    <p class="mt-4 text-g-600 leading-relaxed">
+      전월실적·혜택한도·연회비가 얽혀 사용자가 직접 계산하지 못하고, 기존 추천은 과거 소비만 봅니다.
+      계산이 맞아도 상담사 만류로 실행이 막히거나, 카드사가 근거 없이 자동대체를 실행합니다.
+      각 Pain에는 실패로 간주하는 KPI 기준을 붙였습니다.
+    </p>
+  </div>
+
+  <div class="mt-9 grid md:grid-cols-2 gap-4">
+    <!-- pain card template -->
+    <article class="rounded-xl2 bg-white shadow-card p-6 border border-g-100">
+      <div class="flex items-start justify-between gap-3">
+        <h3 class="font-bold text-lg leading-snug">스스로 계산할 수 없다</h3>
+        <span class="shrink-0 text-xs font-semibold px-2 py-1 rounded-lg bg-g-100 text-g-600">🟡 기준선 미측정</span>
+      </div>
+      <p class="mt-2 text-g-600 text-sm leading-relaxed">전월실적 구간·혜택한도·연회비가 얽혀 스스로 계산할 수 없다.</p>
+      <p class="mt-4 text-sm"><span class="text-g-500">실패 KPI</span><br/>온보딩 시작 대비 계산 결과 도달 전환율 <b class="text-brand-blue">&lt; 40%</b>면 실패</p>
+    </article>
+
+    <article class="rounded-xl2 bg-white shadow-card p-6 border border-g-100">
+      <div class="flex items-start justify-between gap-3">
+        <h3 class="font-bold text-lg leading-snug">과거 데이터만 본다</h3>
+        <span class="shrink-0 text-xs font-semibold px-2 py-1 rounded-lg bg-blue-50 text-brand-blue">🔵 경쟁 리서치</span>
+      </div>
+      <p class="mt-2 text-g-600 text-sm leading-relaxed">기존 카드추천은 과거 소비 데이터만 본다.</p>
+      <p class="mt-4 text-sm"><span class="text-g-500">실패 KPI</span><br/>경쟁 6곳 중 미래소비반영 충족 <b class="text-brand-blue">0/6곳</b> — 이 공백을 <b>F-01</b>로 메움</p>
+    </article>
+
+    <article class="rounded-xl2 bg-white shadow-card p-6 border border-g-100">
+      <div class="flex items-start justify-between gap-3">
+        <h3 class="font-bold text-lg leading-snug">상담사 만류로 실행 실패</h3>
+        <span class="shrink-0 text-xs font-semibold px-2 py-1 rounded-lg bg-blue-50 text-brand-blue">🔵 금감원</span>
+      </div>
+      <p class="mt-2 text-g-600 text-sm leading-relaxed">계산이 맞아도 상담사 만류로 실행에 실패한다.</p>
+      <p class="mt-4 text-sm"><span class="text-g-500">실패 KPI</span><br/>신용카드 민원 ’22→’25 <b class="text-brand-blue">+88.4%</b> — 실행 완주율 신규 측정으로 내부화</p>
+    </article>
+
+    <article class="rounded-xl2 bg-white shadow-card p-6 border border-g-100">
+      <div class="flex items-start justify-between gap-3">
+        <h3 class="font-bold text-lg leading-snug">근거 없는 자동대체</h3>
+        <span class="shrink-0 text-xs font-semibold px-2 py-1 rounded-lg bg-blue-50 text-brand-blue">🔵 금감원</span>
+      </div>
+      <p class="mt-2 text-g-600 text-sm leading-relaxed">카드사가 근거 없이 자동대체를 대신 실행한다.</p>
+      <p class="mt-4 text-sm"><span class="text-g-500">실패 KPI</span><br/>위와 동일 민원 지표 <b class="text-brand-blue">+88.4%</b></p>
+    </article>
+
+    <article class="rounded-xl2 bg-white shadow-card p-6 border-2 border-brand-blue/30 ring-1 ring-brand-blue/10">
+      <div class="flex items-start justify-between gap-3">
+        <h3 class="font-bold text-lg leading-snug">미래 지출 입력 자체가 부담 <span class="text-brand-blue text-sm">‘가장 큰 가정’</span></h3>
+        <span class="shrink-0 text-xs font-semibold px-2 py-1 rounded-lg bg-amber-50 text-amber-600">🟡 Concierge 실측</span>
+      </div>
+      <p class="mt-2 text-g-600 text-sm leading-relaxed">미래 지출을 예측해 입력하는 것 자체가 부담이다.</p>
+      <p class="mt-4 text-sm"><span class="text-g-500">실패 KPI</span><br/>F-01 온보딩 이탈률 <b class="text-brand-blue">&gt; 30%</b>면 가정 붕괴 신호</p>
+    </article>
+
+    <article class="rounded-xl2 bg-white shadow-card p-6 border border-g-100">
+      <div class="flex items-start justify-between gap-3">
+        <h3 class="font-bold text-lg leading-snug">정보 과부하로 포기 <span class="text-g-400 text-sm">윤태호 유형</span></h3>
+        <span class="shrink-0 text-xs font-semibold px-2 py-1 rounded-lg bg-g-100 text-g-600">🟡</span>
+      </div>
+      <p class="mt-2 text-g-600 text-sm leading-relaxed">처리 항목이 많으면 정보 과부하로 포기한다.</p>
+      <p class="mt-4 text-sm"><span class="text-g-500">실패 KPI</span><br/>카드 10장+ 보유자 결과 확인 후 24h 내 재방문율 <b class="text-brand-blue">&lt; 50%</b>면 실패</p>
+    </article>
+  </div>
+
+  <p class="mt-4 text-sm text-g-500">
+    ※ 이벤트 미종속(오세훈·강민재 유형)은 DOS 니치(F 후보)라 우선순위가 낮음 — 이벤트 미선택 입력 완료율 &lt; 60%면 실패 <span class="text-g-400">🟡</span>
+  </p>
+</section>
+
+<!-- ============ GOAL / NORTH STAR ============ -->
+<section id="goal" class="pt-20 reveal">
+  <div class="max-w-2xl">
+    <p class="text-brand-blue font-bold text-sm mb-2">02 · Goal &amp; Metrics</p>
+    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Desired Outcome와 북극성 지표</h2>
+    <p class="mt-4 text-g-600 leading-relaxed">
+      Job A(미래지출 자동연결)가 v0.1 MVP의 핵심입니다. Job C(실행완주)는 마이데이터 서비스에 직권·대행 권한이 없어
+      <b class="text-g-800">기능이 아니라 “측정”으로만</b> 대응합니다.
+    </p>
+  </div>
+
+  <!-- job outcome quantified -->
+  <div class="mt-9 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="rounded-xl2 bg-white shadow-card p-6 border border-g-100">
+      <div class="flex items-center gap-2 mb-3"><span class="w-6 h-6 grid place-items-center rounded-lg bg-brand-blue text-white text-xs font-bold">A</span><span class="text-xs font-semibold text-brand-blue">최우선 · MVP 핵심</span></div>
+      <p class="font-bold">미래지출 자동연결</p>
+      <p class="mt-2 text-sm text-g-600">AOS <b>4.0</b> · DOS(SAM) <b>2.32</b></p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card p-6 border border-g-100">
+      <div class="flex items-center gap-2 mb-3"><span class="w-6 h-6 grid place-items-center rounded-lg bg-g-800 text-white text-xs font-bold">C</span><span class="text-xs font-semibold text-g-700">측정으로만 대응</span></div>
+      <p class="font-bold">실행 완주</p>
+      <p class="mt-2 text-sm text-g-600">AOS <b>3.2</b> · DOS(SAM) <b>2.40</b> <span class="text-g-400">(6후보 중 1위)</span></p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card p-6 border border-g-100">
+      <div class="flex items-center gap-2 mb-3"><span class="w-6 h-6 grid place-items-center rounded-lg bg-g-600 text-white text-xs font-bold">B</span><span class="text-xs font-semibold text-g-600">F-06으로 대응</span></div>
+      <p class="font-bold">근거 검증</p>
+      <p class="mt-2 text-sm text-g-600">계산 근거 공개로 대응</p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card p-6 border border-g-100">
+      <div class="flex items-center gap-2 mb-3"><span class="w-6 h-6 grid place-items-center rounded-lg bg-g-400 text-white text-xs font-bold">F</span><span class="text-xs font-semibold text-g-500">니치 · 원칙 반영</span></div>
+      <p class="font-bold">이벤트 비종속</p>
+      <p class="mt-2 text-sm text-g-600">“이벤트 선택 강제 없음” 원칙</p>
+    </div>
+  </div>
+
+  <!-- north star -->
+  <div class="mt-4 grid lg:grid-cols-3 gap-4">
+    <div class="lg:col-span-1 rounded-xl3 bg-ink-800 text-white p-7 shadow-card relative overflow-hidden">
+      <div class="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-brand-blue/25 blur-2xl"></div>
+      <div class="relative">
+        <div class="flex items-center gap-2 text-sm text-white/70 font-medium">🎯 North Star</div>
+        <div class="mt-4 text-5xl font-extrabold tracking-tight text-brand-blue">≥ 40%</div>
+        <p class="mt-3 font-semibold">Payment Plan Selection Rate</p>
+        <p class="mt-1 text-sm text-white/60">제시된 조합을 실제로 선택하는 비율 · 주간 · Concierge Test로 실측</p>
+        <p class="mt-4 text-xs text-white/45">기준선 🟠 미측정</p>
+      </div>
+    </div>
+
+    <div class="lg:col-span-2 rounded-xl3 bg-white shadow-card border border-g-100 p-2">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-g-500 text-left">
+            <th class="px-4 py-3 font-semibold">보조 KPI</th>
+            <th class="px-4 py-3 font-semibold">기준선</th>
+            <th class="px-4 py-3 font-semibold">목표값</th>
+            <th class="px-4 py-3 font-semibold">주기</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-g-100">
+          <tr>
+            <td class="px-4 py-3 font-medium">Execution Completion Rate <span class="block text-xs text-g-400 font-normal">선택 후 실제 해지·전환 완료율 · 측정 전용, 대행 아님</span></td>
+            <td class="px-4 py-3 text-g-500">🟠 미측정(신규)</td>
+            <td class="px-4 py-3">1차 관찰만</td>
+            <td class="px-4 py-3 text-g-500">월간</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-medium">온보딩 완료율 <span class="text-g-400 font-normal">(F-01·F-02)</span></td>
+            <td class="px-4 py-3 text-g-500">🟠 미측정</td>
+            <td class="px-4 py-3 font-semibold text-brand-blue">≥ 60%</td>
+            <td class="px-4 py-3 text-g-500">주간</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-medium">계산 근거 열람율 <span class="text-g-400 font-normal">(F-06 클릭률)</span></td>
+            <td class="px-4 py-3 text-g-500">🟠 미측정</td>
+            <td class="px-4 py-3 font-semibold text-brand-blue">≥ 50%</td>
+            <td class="px-4 py-3 text-g-500">주간</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PERSONA ============ -->
+<section id="persona" class="pt-20 reveal">
+  <div class="max-w-2xl">
+    <p class="text-brand-blue font-bold text-sm mb-2">03 · Personas</p>
+    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">누구의 어떤 Job을 푸는가</h2>
+    <p class="mt-4 text-g-600 leading-relaxed">Core는 기준 페르소나, Adjacent는 확장, Extreme·Non-user는 경계를 표시합니다. 윤태호·조민아·배정호는 v0.1에서 명시적으로 제외됩니다.</p>
+  </div>
+
+  <div class="mt-9 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <!-- persona card -->
+    <div class="rounded-xl2 bg-white shadow-card border border-g-100 p-6 hover:shadow-cardhover transition">
+      <span class="text-xs font-bold px-2 py-1 rounded-md bg-blue-50 text-brand-blue">Core · 기준</span>
+      <h3 class="mt-3 font-bold text-lg">이서연 <span class="text-g-400 text-sm font-medium">32 · 혼인 예정</span></h3>
+      <p class="mt-2 text-sm text-g-600">미래 지출을 카드 혜택과 미리 연결해 계산받고 싶음 <span class="text-brand-blue font-semibold">Job A</span></p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card border border-g-100 p-6 hover:shadow-cardhover transition">
+      <span class="text-xs font-bold px-2 py-1 rounded-md bg-blue-50 text-brand-blue">Core</span>
+      <h3 class="mt-3 font-bold text-lg">박서준 <span class="text-g-400 text-sm font-medium">34 · 자동대체 경험</span></h3>
+      <p class="mt-2 text-sm text-g-600">계산 결과를 실행(해지·전환)까지 완주하고 싶음 <span class="text-brand-blue font-semibold">Job C</span></p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card border border-g-100 p-6 hover:shadow-cardhover transition">
+      <span class="text-xs font-bold px-2 py-1 rounded-md bg-blue-50 text-brand-blue">Core</span>
+      <h3 class="mt-3 font-bold text-lg">최유리 <span class="text-g-400 text-sm font-medium">39 · 회계 전문가</span></h3>
+      <p class="mt-2 text-sm text-g-600">계산 근거를 스스로 검증하고 싶음 <span class="text-brand-blue font-semibold">Job B</span></p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card border border-g-100 p-6 hover:shadow-cardhover transition">
+      <span class="text-xs font-bold px-2 py-1 rounded-md bg-indigo-50 text-indigo-500">Adjacent</span>
+      <h3 class="mt-3 font-bold text-lg">오세훈·강민재 <span class="text-g-400 text-sm font-medium">이직·자녀독립</span></h3>
+      <p class="mt-2 text-sm text-g-600">정해진 이벤트가 아니어도 인정받고 싶음 <span class="text-brand-blue font-semibold">Job F</span></p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card border border-g-100 p-6 hover:shadow-cardhover transition">
+      <span class="text-xs font-bold px-2 py-1 rounded-md bg-amber-50 text-amber-600">Extreme</span>
+      <h3 class="mt-3 font-bold text-lg">신은서 <span class="text-g-400 text-sm font-medium">해지 3회 실패</span></h3>
+      <p class="mt-2 text-sm text-g-600">Job C 실패 사례 — Execution Completion Rate 설계의 실사용자 근거</p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card border border-g-100 p-6 hover:shadow-cardhover transition opacity-80">
+      <span class="text-xs font-bold px-2 py-1 rounded-md bg-amber-50 text-amber-600">Extreme</span>
+      <h3 class="mt-3 font-bold text-lg">윤태호 <span class="text-g-400 text-sm font-medium">카드 20장+</span></h3>
+      <p class="mt-2 text-sm text-g-600">정보 과부하로 실행 포기 — 경계 Job <span class="font-semibold text-g-500">(v0.1 제외)</span></p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card border border-g-100 p-6 hover:shadow-cardhover transition opacity-80 sm:col-span-2 lg:col-span-3">
+      <span class="text-xs font-bold px-2 py-1 rounded-md bg-g-100 text-g-500">Non-user</span>
+      <h3 class="mt-3 font-bold text-lg">조민아·배정호</h3>
+      <p class="mt-2 text-sm text-g-600">예측 거부·디지털 비친화 — 경계 Job <span class="font-semibold text-g-500">(v0.1 제외)</span>. 서비스가 도달할 수 없는 경계를 표시하는 참고 대상.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ JOURNEY (CJM) ============ -->
+<section id="journey" class="pt-20 reveal">
+  <div class="max-w-2xl">
+    <p class="text-brand-blue font-bold text-sm mb-2">04 · Customer Journey</p>
+    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">7단계 여정 (CJM)</h2>
+    <p class="mt-4 text-g-600 leading-relaxed">전체 여정은 05_Persona_Spectrum_Journey의 7단계를 그대로 따릅니다.</p>
+  </div>
+
+  <div class="mt-9 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+    <!-- step -->
+    <div class="rounded-xl2 bg-white shadow-card border border-g-100 p-4 relative">
+      <div class="w-8 h-8 grid place-items-center rounded-lg bg-g-100 text-g-500 font-bold text-sm">①</div>
+      <p class="mt-3 font-bold text-sm">트리거</p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card border border-g-100 p-4">
+      <div class="w-8 h-8 grid place-items-center rounded-lg bg-g-100 text-g-500 font-bold text-sm">②</div>
+      <p class="mt-3 font-bold text-sm">인지</p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card border-2 border-brand-blue/30 p-4 ring-1 ring-brand-blue/10">
+      <div class="w-8 h-8 grid place-items-center rounded-lg bg-brand-blue text-white font-bold text-sm">③</div>
+      <p class="mt-3 font-bold text-sm">온보딩·입력</p>
+      <p class="text-xs text-brand-blue mt-1 font-semibold">F-01·F-02</p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card border-2 border-brand-blue/30 p-4 ring-1 ring-brand-blue/10">
+      <div class="w-8 h-8 grid place-items-center rounded-lg bg-brand-blue text-white font-bold text-sm">④</div>
+      <p class="mt-3 font-bold text-sm">계산결과 확인</p>
+      <p class="text-xs text-brand-blue mt-1 font-semibold">F-03·F-06</p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card border border-g-100 p-4">
+      <div class="w-8 h-8 grid place-items-center rounded-lg bg-g-100 text-g-500 font-bold text-sm">⑤</div>
+      <p class="mt-3 font-bold text-sm">신규카드 비교</p>
+      <p class="text-xs text-g-400 mt-1 font-semibold">F-04</p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card border border-g-100 p-4">
+      <div class="w-8 h-8 grid place-items-center rounded-lg bg-g-100 text-g-500 font-bold text-sm">⑥</div>
+      <p class="mt-3 font-bold text-sm">실행</p>
+      <p class="text-xs text-g-400 mt-1 font-semibold">측정만</p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card border border-g-100 p-4">
+      <div class="w-8 h-8 grid place-items-center rounded-lg bg-g-100 text-g-500 font-bold text-sm">⑦</div>
+      <p class="mt-3 font-bold text-sm">구매 후</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ USER STORIES + AC (accordions) ============ -->
+<section id="story" class="pt-20 reveal">
+  <div class="max-w-2xl">
+    <p class="text-brand-blue font-bold text-sm mb-2">05 · User Stories &amp; AC</p>
+    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">사용자 스토리와 수용 기준</h2>
+    <p class="mt-4 text-g-600 leading-relaxed">우선순위는 JTBD Job 선언(A·C 공동 1위, B 3위, F 니치)을 그대로 따릅니다. 각 스토리의 수용 기준(AC)은 아래에서 펼쳐 확인하세요.</p>
+  </div>
+
+  <div class="mt-9 space-y-4">
+
+    <!-- Story A -->
+    <div class="acc rounded-xl3 bg-white shadow-card border border-g-100 overflow-hidden">
+      <button class="acc-head w-full text-left p-6 flex items-start gap-4">
+        <span class="shrink-0 w-9 h-9 grid place-items-center rounded-xl bg-brand-blue text-white font-extrabold">A</span>
+        <span class="flex-1 min-w-0">
+          <span class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-brand-blue text-white">Must</span>
+            <span class="font-bold text-lg">미래지출 자동 연결</span>
+          </span>
+          <span class="block mt-1.5 text-g-600 text-sm leading-relaxed">
+            소비 구조가 곧 바뀔 카드 이용자(이서연)로서, 미래 지출 변화를 카드 혜택과 자동으로 연결해 계산받아 놓치는 혜택 없이 최대 혜택을 받고 싶다.
+          </span>
+        </span>
+        <svg class="acc-chev shrink-0 text-g-400 transition-transform" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="acc-body">
+        <div class="px-6 pb-6 pt-0 space-y-3">
+          <div class="rounded-xl2 bg-g-50 p-4 border border-g-100">
+            <p class="text-xs font-bold text-brand-blue mb-1">AC1 · 성능</p>
+            <p class="text-sm text-g-700">마이데이터 연동을 완료한 사용자가 미래 지출 카테고리·금액·시점을 입력하면, <b>p95 ≤ 5,000ms</b> 안에 시나리오 계산 결과가 표시된다.</p>
+          </div>
+          <div class="rounded-xl2 bg-g-50 p-4 border border-g-100">
+            <p class="text-xs font-bold text-brand-blue mb-1">AC2 · 차액 표시</p>
+            <p class="text-sm text-g-700">결과 화면에서 현재 조합 유지 시 예상 혜택과 추천 조합 예상 혜택의 <b>차액이 원 단위</b>로 표시된다 (계산 오차 ≤ 100원 — 규칙 기반 결정론적 계산이므로 사실상 0 허용).</p>
+          </div>
+          <div class="rounded-xl2 bg-g-50 p-4 border border-g-100">
+            <p class="text-xs font-bold text-brand-blue mb-1">AC3 · 이탈률</p>
+            <p class="text-sm text-g-700">신규 사용자가 온보딩을 진행하면, 미래 지출 입력 완료까지의 <b>주간 이탈률이 30% 이하</b>로 유지된다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Story C -->
+    <div class="acc rounded-xl3 bg-white shadow-card border border-g-100 overflow-hidden">
+      <button class="acc-head w-full text-left p-6 flex items-start gap-4">
+        <span class="shrink-0 w-9 h-9 grid place-items-center rounded-xl bg-g-800 text-white font-extrabold">C</span>
+        <span class="flex-1 min-w-0">
+          <span class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-brand-blue text-white">Must</span>
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-600">측정에 한정</span>
+            <span class="font-bold text-lg">실행 완주 측정</span>
+          </span>
+          <span class="block mt-1.5 text-g-600 text-sm leading-relaxed">
+            해지가 유리하다고 나온 사용자(신은서·박서준)로서, 계산 근거를 믿고 실제 해지·전환까지 완료해 계산한 혜택을 실제로 받고 싶다.
+          </span>
+        </span>
+        <svg class="acc-chev shrink-0 text-g-400 transition-transform" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="acc-body">
+        <div class="px-6 pb-6 pt-0 space-y-3">
+          <div class="rounded-xl2 bg-amber-50/60 p-4 border border-amber-100 text-sm text-amber-800">
+            ⚠️ 이 스토리에 대응하는 기능은 <b>측정(Execution Completion Rate)뿐</b>입니다. 해지 상담·신청 대행·만류 대응 안내 등 실행 지원 기능은 어떤 형태로도 설계하지 않습니다 (마이데이터 기반 서비스는 직권·대행 권한이 없음).
+          </div>
+          <div class="rounded-xl2 bg-g-50 p-4 border border-g-100">
+            <p class="text-xs font-bold text-g-700 mb-1">AC1 · 집계</p>
+            <p class="text-sm text-g-700">추천 조합 확인 후 30일이 경과하면, 앱 내 자기신고(“완료했어요” 버튼) 또는 재방문 행동으로 실행 여부를 Execution Completion Rate에 집계한다.</p>
+          </div>
+          <div class="rounded-xl2 bg-g-50 p-4 border border-g-100">
+            <p class="text-xs font-bold text-g-700 mb-1">AC2 · 격차 경보</p>
+            <p class="text-sm text-g-700">분기 종료 시 Payment Plan Selection Rate와 나란히 리포트해 “선택했지만 미실행” 격차를 정량화한다 (격차 <b>20%p 이상이면 경보</b> 🟡).</p>
+          </div>
+          <div class="rounded-xl2 bg-g-50 p-4 border border-g-100">
+            <p class="text-xs font-bold text-g-700 mb-1">AC3 · 후속 액션 없음</p>
+            <p class="text-sm text-g-700">미완료 자기신고 사유(상담사 만류/시간 부족/기타)는 지표 집계에만 사용하고, v0.1에서는 어떤 후속 액션 기능도 자동 트리거하지 않는다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Story B -->
+    <div class="acc rounded-xl3 bg-white shadow-card border border-g-100 overflow-hidden">
+      <button class="acc-head w-full text-left p-6 flex items-start gap-4">
+        <span class="shrink-0 w-9 h-9 grid place-items-center rounded-xl bg-g-600 text-white font-extrabold">B</span>
+        <span class="flex-1 min-w-0">
+          <span class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-brand-blue text-white">Must</span>
+            <span class="font-bold text-lg">신뢰 가능한 계산 근거</span>
+          </span>
+          <span class="block mt-1.5 text-g-600 text-sm leading-relaxed">
+            결과를 스스로 검증하고 싶은 사용자(최유리)로서, 계산 근거를 투명하게 확인해 카드사 설명이 아니라 내가 검증한 숫자로 결정하고 싶다.
+          </span>
+        </span>
+        <svg class="acc-chev shrink-0 text-g-400 transition-transform" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="acc-body">
+        <div class="px-6 pb-6 pt-0 space-y-3">
+          <div class="rounded-xl2 bg-g-50 p-4 border border-g-100">
+            <p class="text-xs font-bold text-g-700 mb-1">AC1 · 근거 펼침</p>
+            <p class="text-sm text-g-700">“근거 보기”를 클릭하면 적용된 실적구간·혜택한도·연회비 규칙이 항목별로 <b>p95 ≤ 1,000ms</b> 안에 펼쳐진다.</p>
+          </div>
+          <div class="rounded-xl2 bg-g-50 p-4 border border-g-100">
+            <p class="text-xs font-bold text-g-700 mb-1">AC2 · 제외 비용 명시</p>
+            <p class="text-sm text-g-700">계산에 포함되지 않은 비용(포인트 소멸·자동납부 승계 등)이 있을 때 “이 계산에는 포함되지 않았습니다” 문구가 <b>누락 없이(누락률 0%)</b> 표시된다.</p>
+          </div>
+          <div class="rounded-xl2 bg-g-50 p-4 border border-g-100">
+            <p class="text-xs font-bold text-g-700 mb-1">AC3 · 열람율</p>
+            <p class="text-sm text-g-700">근거 화면 노출 후 주간 집계 시 근거 화면 <b>열람율이 50% 이상</b>이다 🟡.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Story F -->
+    <div class="acc rounded-xl3 bg-white shadow-card border border-g-100 overflow-hidden">
+      <button class="acc-head w-full text-left p-6 flex items-start gap-4">
+        <span class="shrink-0 w-9 h-9 grid place-items-center rounded-xl bg-g-400 text-white font-extrabold">F</span>
+        <span class="flex-1 min-w-0">
+          <span class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-600">Should · 니치</span>
+            <span class="font-bold text-lg">이벤트 비종속 인정</span>
+          </span>
+          <span class="block mt-1.5 text-g-600 text-sm leading-relaxed">
+            정해진 이벤트(혼인·이사)에 해당하지 않는 사용자(오세훈)로서, 이벤트명을 선택하지 않고도 소비 변화를 입력해 내 상황도 서비스 대상으로 인정받고 싶다.
+          </span>
+        </span>
+        <svg class="acc-chev shrink-0 text-g-400 transition-transform" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="acc-body">
+        <div class="px-6 pb-6 pt-0 space-y-3">
+          <div class="rounded-xl2 bg-g-50 p-4 border border-g-100">
+            <p class="text-xs font-bold text-g-700 mb-1">AC1 · 필수 이벤트 0개</p>
+            <p class="text-sm text-g-700">온보딩에서 지출 변화를 입력할 때 이벤트 종류를 선택하는 <b>필수 단계는 0개</b>다.</p>
+          </div>
+          <div class="rounded-xl2 bg-g-50 p-4 border border-g-100">
+            <p class="text-xs font-bold text-g-700 mb-1">AC2 · 양방향 처리</p>
+            <p class="text-sm text-g-700">지출 변화가 감소 방향일 때도 시스템은 증가·감소 방향 모두를 <b>오류 없이(처리 오류율 0%)</b> 처리한다.</p>
+          </div>
+          <div class="rounded-xl2 bg-g-50 p-4 border border-g-100">
+            <p class="text-xs font-bold text-g-700 mb-1">AC3 · 인정 만족도</p>
+            <p class="text-sm text-g-700">F 해당 사용자가 결과를 받으면 “내 상황이 인정받았다” 만족도(5점) 평균 <b>3.5점 이상</b>을 목표로 한다 🟡.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- D / E summary -->
+  <div class="mt-4 grid sm:grid-cols-2 gap-4">
+    <div class="rounded-xl2 bg-white shadow-card border border-g-100 p-6">
+      <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-600">Should</span>
+      <h3 class="mt-3 font-bold">D · 입력 부담·유연성 <span class="text-g-400 text-sm">AOS 1.8</span></h3>
+      <p class="mt-2 text-sm text-g-600">F-02 마이데이터 자동 수집으로 부분 해소, 별도 스토리 없음.</p>
+    </div>
+    <div class="rounded-xl2 bg-white shadow-card border border-g-100 p-6">
+      <span class="text-xs font-bold px-2 py-0.5 rounded bg-g-100 text-g-500">Won't</span>
+      <h3 class="mt-3 font-bold">E · 지속 사용 동기 <span class="text-g-400 text-sm">AOS 1.8</span></h3>
+      <p class="mt-2 text-sm text-g-600">리텐션 설계는 v0.1 범위 밖.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES (MoSCoW) ============ -->
+<section id="feature" class="pt-20 reveal">
+  <div class="max-w-2xl">
+    <p class="text-brand-blue font-bold text-sm mb-2">06 · Features</p>
+    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">기능 요구사항 (MoSCoW)</h2>
+    <p class="mt-4 text-g-600 leading-relaxed">각 기능은 대안 대비 가치로 정당화됩니다. 계산 엔진은 결정론적 규칙 기반이며, AI는 근거 설명(자연어)에만 씁니다.</p>
+  </div>
+
+  <div class="mt-9 grid lg:grid-cols-2 gap-4">
+    <!-- MUST -->
+    <div class="rounded-xl3 bg-white shadow-card border border-g-100 p-6">
+      <div class="flex items-center gap-2 mb-4"><span class="w-2.5 h-2.5 rounded-full bg-brand-blue"></span><h3 class="font-extrabold text-brand-blue">Must</h3></div>
+      <ul class="space-y-3 text-sm">
+        <li class="flex gap-3"><span class="font-bold text-g-800 shrink-0 w-12">F-01</span><span><b>미래 지출 변화 입력</b>(카테고리·금액·시점, 이벤트 선택 강제 없음) — 경쟁 6곳 중 미래소비반영 0곳 🔵, 유일한 차별점</span></li>
+        <li class="flex gap-3"><span class="font-bold text-g-800 shrink-0 w-12">F-02</span><span><b>마이데이터 연동</b>(과거 소비·보유카드 자동 수집) + 제약조건 입력 — 입력 부담 완화</span></li>
+        <li class="flex gap-3"><span class="font-bold text-g-800 shrink-0 w-12">F-03</span><span><b>시나리오 계산</b>(실적구간·한도·연회비 반영 순혜택 산출) — 뱅크샐러드도 아직 과거 1년 기준</span></li>
+        <li class="flex gap-3"><span class="font-bold text-g-800 shrink-0 w-12">F-04</span><span><b>보유·신규카드 조합 비교</b>, 최종 1안 제시 — 경쟁자 전원 단일 카드 비교에 그침</span></li>
+        <li class="flex gap-3"><span class="font-bold text-g-800 shrink-0 w-12">F-06</span><span><b>계산 근거 공개</b>(적용 규칙·제외 조건 포함) — 민원 +88.4% 불신에 직접 대응</span></li>
+        <li class="flex gap-3"><span class="font-bold text-g-800 shrink-0 w-12">측정</span><span><b>Execution Completion Rate</b>(자기신고 + 재방문 감지, 대행 아님) — KPI 사각지대 해소</span></li>
+      </ul>
+    </div>
+
+    <div class="space-y-4">
+      <!-- SHOULD -->
+      <div class="rounded-xl3 bg-white shadow-card border border-g-100 p-6">
+        <div class="flex items-center gap-2 mb-4"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><h3 class="font-extrabold text-emerald-600">Should</h3></div>
+        <ul class="space-y-3 text-sm">
+          <li class="flex gap-3"><span class="font-bold text-g-800 shrink-0 w-16">초기값</span><span><b>온보딩 초기값 자동 제안</b>(과거 패턴 기반) — “가장 큰 가정” 리스크 완화</span></li>
+          <li class="flex gap-3"><span class="font-bold text-g-800 shrink-0 w-16">F-05</span><span><b>계산 근거 공개 강화</b>(포인트 소멸·자동납부 승계 등 부수 비용 명시)</span></li>
+        </ul>
+      </div>
+      <!-- COULD -->
+      <div class="rounded-xl3 bg-white shadow-card border border-g-100 p-6">
+        <div class="flex items-center gap-2 mb-4"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span><h3 class="font-extrabold text-amber-600">Could</h3></div>
+        <ul class="space-y-3 text-sm">
+          <li class="flex gap-3"><span class="text-g-700">카드 10장 이상 보유자 대상 <b>단계적 결과 제시</b>(“이번 주 상위 3개”) — 정보 과부하 완화, 아직 미반영</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- WON'T -->
+  <div class="mt-4 rounded-xl3 bg-g-100 border border-g-200 p-6">
+    <div class="flex items-center gap-2 mb-4"><span class="w-2.5 h-2.5 rounded-full bg-g-400"></span><h3 class="font-extrabold text-g-500">Won’t — v0.1 Out of Scope</h3></div>
+    <div class="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm text-g-600">
+      <p>· 해지·전환 실행 대행/상담/안내 <span class="text-g-400">(직권·대행 권한 없음)</span></p>
+      <p>· 신규카드 자동 발급</p>
+      <p>· 리텐션(Job E) 전용 기능</p>
+      <p>· 다중카드 조합 최적화 엔진 고도화 <span class="text-g-400">(별도 트랙)</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VOICE OF CUSTOMER (DARK QUOTES) ============ -->
+<section id="voice" class="pt-20 reveal">
+  <div class="max-w-2xl">
+    <p class="text-brand-blue font-bold text-sm mb-2">07 · Voice of Customer</p>
+    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">JTBD 인터뷰 · 고객의 목소리</h2>
+    <p class="mt-4 text-g-600 leading-relaxed">
+      데모 체험 후 회고 형식으로 수집된 응답입니다.
+      <span class="inline-block px-2 py-0.5 rounded bg-amber-50 text-amber-600 text-xs font-semibold align-middle">⚠️ 모의 인터뷰(가상 시뮬레이션) 기반 — 실제 인터뷰 후 교체 예정</span>
+    </p>
+  </div>
+
+  <div class="mt-9 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <figure class="rounded-xl3 bg-ink-700 text-white p-6">
+      <div class="text-brand-blue text-3xl leading-none font-serif">“</div>
+      <blockquote class="mt-2 text-[15px] leading-relaxed text-white/90">여기는 앞으로 쓸 돈을 물어보니까 저를 위한 서비스 같다는 느낌이 딱 왔어요.</blockquote>
+      <figcaption class="mt-4 text-sm text-white/50">이서연 · Core · Job A</figcaption>
+    </figure>
+    <figure class="rounded-xl3 bg-ink-700 text-white p-6">
+      <div class="text-brand-blue text-3xl leading-none font-serif">“</div>
+      <blockquote class="mt-2 text-[15px] leading-relaxed text-white/90">콜센터는 상담사마다 설명이 달라 헷갈렸는데, 여기는 화면에 근거가 나와 있으니까 훨씬 나았어요.</blockquote>
+      <figcaption class="mt-4 text-sm text-white/50">박서준 · Core · Job C·B</figcaption>
+    </figure>
+    <figure class="rounded-xl3 bg-ink-700 text-white p-6 ring-1 ring-amber-500/30">
+      <div class="text-amber-400 text-3xl leading-none font-serif">“</div>
+      <blockquote class="mt-2 text-[15px] leading-relaxed text-white/90">계산은 봤는데, 실제로 전화했을 때 만류당할 걸 대비하는 내용까지는 없어서 여전히 막막했어요.</blockquote>
+      <figcaption class="mt-4 text-sm text-white/50">신은서 · Extreme · Job C 마찰</figcaption>
+    </figure>
+    <figure class="rounded-xl3 bg-ink-700 text-white p-6">
+      <div class="text-brand-blue text-3xl leading-none font-serif">“</div>
+      <blockquote class="mt-2 text-[15px] leading-relaxed text-white/90">예전 서비스는 죄다 혼인·이사 같은 이벤트를 고르라고 해서 늘 해당이 안 됐는데, 여기는 이벤트명 없이도 입력이 됐던 게 제일 달랐어요.</blockquote>
+      <figcaption class="mt-4 text-sm text-white/50">오세훈 · Adjacent · Job F</figcaption>
+    </figure>
+    <figure class="rounded-xl3 bg-ink-700 text-white p-6">
+      <div class="text-brand-blue text-3xl leading-none font-serif">“</div>
+      <blockquote class="mt-2 text-[15px] leading-relaxed text-white/90">제가 직접 하면 반나절은 걸렸을 걸 몇 분 만에 봤으니까요.</blockquote>
+      <figcaption class="mt-4 text-sm text-white/50">최유리 · Core · Job A·B</figcaption>
+    </figure>
+    <figure class="rounded-xl3 bg-ink-900 text-white p-6 ring-1 ring-red-500/30">
+      <div class="text-red-400 text-3xl leading-none font-serif">“</div>
+      <blockquote class="mt-2 text-[15px] leading-relaxed text-white/90">몇 달 뒤를 어떻게 미리 아냐는 생각이 입력 내내 있었어요. 수고에 비해 얻는 게 크게 느껴지지 않았어요.</blockquote>
+      <figcaption class="mt-4 text-sm text-white/50">조민아 · Non-user · “가장 큰 가정” 붕괴(E-05)</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ AOS/DOS OUTCOME TABLE (accordion) ============ -->
+<section class="pt-16 reveal">
+  <div class="acc open rounded-xl3 bg-white shadow-card border border-g-100 overflow-hidden">
+    <button class="acc-head w-full text-left p-6 flex items-center gap-4">
+      <span class="flex-1">
+        <span class="font-bold text-lg">Outcome 우선순위 — AOS · DOS 채점</span>
+        <span class="block text-sm text-g-500 mt-1">A·C가 Importance·AOS·DOS 모두 최상위. F는 AOS 동급이나 DOS 니치. <span class="text-g-400">🟡 팀 추정값</span></span>
+      </span>
+      <svg class="acc-chev shrink-0 text-g-400 transition-transform" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="acc-body">
+      <div class="px-6 pb-6 overflow-x-auto">
+        <table class="w-full text-sm min-w-[640px]">
+          <thead>
+            <tr class="text-g-500 text-left border-b border-g-200">
+              <th class="px-3 py-2.5 font-semibold">Outcome</th>
+              <th class="px-3 py-2.5 font-semibold">Imp</th>
+              <th class="px-3 py-2.5 font-semibold">Sat</th>
+              <th class="px-3 py-2.5 font-semibold">AOS</th>
+              <th class="px-3 py-2.5 font-semibold">DOS(SOM)</th>
+              <th class="px-3 py-2.5 font-semibold">DOS(SAM)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-g-100">
+            <tr class="bg-blue-50/40"><td class="px-3 py-2.5 font-semibold">미래 지출 자동 연결 <span class="text-brand-blue">(A)</span></td><td class="px-3 py-2.5">5</td><td class="px-3 py-2.5">1</td><td class="px-3 py-2.5 font-bold text-brand-blue">4.0</td><td class="px-3 py-2.5">3.04</td><td class="px-3 py-2.5">2.32</td></tr>
+            <tr class="bg-blue-50/40"><td class="px-3 py-2.5 font-semibold">실제 해지·전환 완주 <span class="text-brand-blue">(C)</span></td><td class="px-3 py-2.5">4</td><td class="px-3 py-2.5">1</td><td class="px-3 py-2.5 font-bold text-brand-blue">3.2</td><td class="px-3 py-2.5">3.00</td><td class="px-3 py-2.5 font-semibold">2.40</td></tr>
+            <tr><td class="px-3 py-2.5">계산 근거 검증 <span class="text-g-400">(B)</span></td><td class="px-3 py-2.5">4</td><td class="px-3 py-2.5">2</td><td class="px-3 py-2.5">2.4</td><td class="px-3 py-2.5">1.60</td><td class="px-3 py-2.5">1.26</td></tr>
+            <tr><td class="px-3 py-2.5">이벤트 비종속 인정 <span class="text-g-400">(F)</span></td><td class="px-3 py-2.5">4</td><td class="px-3 py-2.5">1</td><td class="px-3 py-2.5">3.2</td><td class="px-3 py-2.5 text-g-400">1.50</td><td class="px-3 py-2.5 text-g-400">0.90</td></tr>
+            <tr><td class="px-3 py-2.5 text-g-500">지속 사용 <span class="text-g-400">(E)</span></td><td class="px-3 py-2.5">3</td><td class="px-3 py-2.5">2</td><td class="px-3 py-2.5">1.8</td><td class="px-3 py-2.5">0.77</td><td class="px-3 py-2.5">0.57</td></tr>
+            <tr><td class="px-3 py-2.5 text-g-500">입력 유연성 <span class="text-g-400">(D)</span></td><td class="px-3 py-2.5">3</td><td class="px-3 py-2.5">2</td><td class="px-3 py-2.5">1.8</td><td class="px-3 py-2.5">0.65</td><td class="px-3 py-2.5">0.48</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RISK ============ -->
+<section id="risk" class="pt-20 reveal">
+  <div class="max-w-2xl">
+    <p class="text-brand-blue font-bold text-sm mb-2">08 · Risks &amp; Assumptions</p>
+    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">리스크와 가정</h2>
+  </div>
+
+  <div class="mt-9 grid md:grid-cols-2 gap-4">
+    <article class="rounded-xl3 bg-ink-800 text-white p-7 md:col-span-2 relative overflow-hidden">
+      <div class="absolute -bottom-16 -right-10 w-56 h-56 rounded-full bg-red-500/15 blur-3xl"></div>
+      <div class="relative">
+        <span class="text-xs font-bold px-2 py-1 rounded-lg bg-red-500/20 text-red-300">최대 리스크 🟡</span>
+        <h3 class="mt-4 font-bold text-xl">“가장 큰 가정” 붕괴</h3>
+        <p class="mt-2 text-white/70 leading-relaxed max-w-3xl">미래 지출 입력의 수고가 혜택 최적화 보상을 정당화하지 못하면 온보딩 자체가 무너진다(조민아 응답, E-05). Concierge Test에서 <b class="text-white">최우선 검증</b>.</p>
+      </div>
+    </article>
+
+    <article class="rounded-xl2 bg-white shadow-card border border-g-100 p-6">
+      <span class="text-xs font-bold px-2 py-1 rounded-lg bg-blue-50 text-brand-blue">🔵 인가</span>
+      <h3 class="mt-3 font-bold">마이데이터 인가·제휴 지속성</h3>
+      <p class="mt-2 text-sm text-g-600">사업자 다수가 최근 허가를 반납. 직접 인가 취득 또는 제휴 계약의 법적 안정성이 전제조건.</p>
+    </article>
+    <article class="rounded-xl2 bg-white shadow-card border border-g-100 p-6">
+      <span class="text-xs font-bold px-2 py-1 rounded-lg bg-g-100 text-g-600">정확도</span>
+      <h3 class="mt-3 font-bold">카드 혜택 Rule 파편화</h3>
+      <p class="mt-2 text-sm text-g-600">통합 공식 API가 없어 수작업 수집·버전관리 실패 시 계산 신뢰도 붕괴.</p>
+    </article>
+    <article class="rounded-xl2 bg-white shadow-card border border-g-100 p-6 md:col-span-2">
+      <span class="text-xs font-bold px-2 py-1 rounded-lg bg-amber-50 text-amber-600">지표 착시</span>
+      <h3 class="mt-3 font-bold">North Star 지표 착시</h3>
+      <p class="mt-2 text-sm text-g-600">Payment Plan Selection Rate만 보면 신은서 같은 “선택 후 실행 실패”가 성공으로 집계됨 — Execution Completion Rate를 반드시 나란히 리포트해야 함.</p>
+    </article>
+  </div>
+
+  <div class="mt-4 rounded-xl2 bg-g-100 border border-g-200 p-6 text-sm text-g-600 leading-relaxed">
+    <b class="text-g-800">가정·의존성</b> · 마이데이터 연동이 MVP 전제(2026-08-19 팀 결정) · Net Benefit 게이팅 로직은 11_Benchmark_Transfer 설계에 의존 · Importance·Satisfaction 점수는 현재 팀 추정(🟡)이며 Concierge Test 실측 전까지 우선순위는 잠정적.
+  </div>
+</section>
+
+<!-- ============ EXPERIMENT / ROLLOUT ============ -->
+<section id="rollout" class="pt-20 reveal">
+  <div class="max-w-2xl">
+    <p class="text-brand-blue font-bold text-sm mb-2">09 · Experiment &amp; Rollout</p>
+    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">실험 · 롤아웃 · 측정</h2>
+  </div>
+
+  <div class="mt-9 grid md:grid-cols-2 gap-4">
+    <div class="rounded-xl3 bg-white shadow-card border border-g-100 p-7">
+      <span class="text-xs font-bold px-2 py-1 rounded-lg bg-brand-blue text-white">1차</span>
+      <h3 class="mt-3 font-bold text-lg">Concierge Test</h3>
+      <p class="mt-1 text-sm text-g-500">혼인 Beachhead(웨딩업체 제휴) · 사람이 직접 수동 응대</p>
+      <div class="mt-4 rounded-xl2 bg-g-50 border border-g-100 p-4 text-sm">
+        <p class="text-g-500 text-xs font-semibold mb-1">가설</p>
+        <p class="text-g-700">“미래 지출 입력 → 계산 근거 공개” 조합이 <b class="text-brand-blue">Payment Plan Selection Rate ≥ 40%</b>를 달성한다.</p>
+      </div>
+      <p class="mt-3 text-sm text-g-500">측정 · 선택률, 온보딩 이탈률, 근거 화면 열람율</p>
+    </div>
+    <div class="rounded-xl3 bg-white shadow-card border border-g-100 p-7">
+      <span class="text-xs font-bold px-2 py-1 rounded-lg bg-g-800 text-white">2차</span>
+      <h3 class="mt-3 font-bold text-lg">A/B 테스트</h3>
+      <p class="mt-1 text-sm text-g-500">온보딩 초기값 자동 제안(과거 패턴 기반)</p>
+      <div class="mt-4 rounded-xl2 bg-g-50 border border-g-100 p-4 text-sm">
+        <p class="text-g-500 text-xs font-semibold mb-1">가설</p>
+        <p class="text-g-700">초기값 자동 제안이 있으면 없을 때보다 <b>온보딩 완료율이 유의하게 높다</b>.</p>
+      </div>
+      <p class="mt-3 text-sm text-g-500">측정 · 완료율(대조군 vs 실험군), 표본 <b>n ≥ 300</b>(그룹당)</p>
+    </div>
+  </div>
+
+  <div class="mt-4 rounded-xl2 bg-white shadow-card border border-g-100 p-6 text-sm text-g-600">
+    <b class="text-g-800">벤치마크 계획</b> · 경쟁 5개사(뱅크샐러드·카드고릴라·토스 카드라운지·카카오페이·더쎈카드) 대비 “미래소비반영 · 조합재배치 · 근거공개” 3축 벤치마크를 분기별로 갱신.
+  </div>
+</section>
+
+<!-- ============ NFR / DATA (accordion) ============ -->
+<section class="pt-16 pb-8 reveal space-y-4">
+  <!-- NFR -->
+  <div class="acc rounded-xl3 bg-white shadow-card border border-g-100 overflow-hidden">
+    <button class="acc-head w-full text-left p-6 flex items-center gap-4">
+      <span class="flex-1"><span class="font-bold text-lg">비기능 요구사항 (NFR)</span><span class="block text-sm text-g-500 mt-1">성능 · 신뢰성 · 보안/비용 · 모니터링</span></span>
+      <svg class="acc-chev shrink-0 text-g-400 transition-transform" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="acc-body"><div class="px-6 pb-6 grid sm:grid-cols-2 gap-3 text-sm">
+      <div class="rounded-xl2 bg-g-50 border border-g-100 p-4"><p class="font-semibold text-g-800 mb-1">성능</p><p class="text-g-600">시나리오 계산(F-03) p95 ≤ 3,000ms · 근거 화면(F-06) p95 ≤ 1,000ms</p></div>
+      <div class="rounded-xl2 bg-g-50 border border-g-100 p-4"><p class="font-semibold text-g-800 mb-1">신뢰성</p><p class="text-g-600">월 가용성 ≥ 99.5% · 계산 오류율 ≤ 0.5% (경계값 테스트 필수)</p></div>
+      <div class="rounded-xl2 bg-g-50 border border-g-100 p-4"><p class="font-semibold text-g-800 mb-1">보안/비용</p><p class="text-g-600">마이데이터 표준 API 인가 요건 준수, 혜택 Rule 시작일·종료일 버전 관리 필수</p></div>
+      <div class="rounded-xl2 bg-g-50 border border-g-100 p-4"><p class="font-semibold text-g-800 mb-1">모니터링</p><p class="text-g-600">온보딩 funnel, 계산 오류율, 불필요 신규카드 추천 비율, 선택률·완주율·열람율 — 대시보드·주간 알림</p></div>
+    </div></div>
+  </div>
+
+  <!-- Data / Interface -->
+  <div class="acc rounded-xl3 bg-white shadow-card border border-g-100 overflow-hidden">
+    <button class="acc-head w-full text-left p-6 flex items-center gap-4">
+      <span class="flex-1"><span class="font-bold text-lg">데이터 · 인터페이스 개요</span><span class="block text-sm text-g-500 mt-1">핵심 엔터티 · API 제약</span></span>
+      <svg class="acc-chev shrink-0 text-g-400 transition-transform" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="acc-body"><div class="px-6 pb-6 space-y-4 text-sm">
+      <div>
+        <p class="font-semibold text-g-800 mb-2">핵심 엔터티</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1.5 rounded-lg bg-g-100 text-g-700 font-medium">User</span>
+          <span class="px-3 py-1.5 rounded-lg bg-g-100 text-g-700 font-medium">MyDataConsent</span>
+          <span class="px-3 py-1.5 rounded-lg bg-g-100 text-g-700 font-medium">CardHolding</span>
+          <span class="px-3 py-1.5 rounded-lg bg-g-100 text-g-700 font-medium">FutureSpendInput <span class="text-g-400">(이벤트 라벨 nullable)</span></span>
+          <span class="px-3 py-1.5 rounded-lg bg-g-100 text-g-700 font-medium">RecommendationResult</span>
+          <span class="px-3 py-1.5 rounded-lg bg-g-100 text-g-700 font-medium">ExecutionCompletionLog</span>
+        </div>
+      </div>
+      <div>
+        <p class="font-semibold text-g-800 mb-2">API 제약</p>
+        <ul class="space-y-1.5 text-g-600">
+          <li>· 마이데이터 표준 API가 유일 경로 🔵 — 장애 시 “최근 확인된 데이터 기준” 경고로 완화</li>
+          <li>· 카드 혜택 Rule은 수동 수집(통합 공식 API 없음 🔵) — 버전 관리 필요</li>
+          <li>· 계산 엔진은 결정론적 규칙, AI는 근거 설명(자연어)에만 사용 — “AI가 혜택금액을 임의 계산하지 않는다”</li>
+          <li>· Execution Completion 측정은 자체 로그로만(카드사 연동 없음)</li>
+        </ul>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Proof -->
+  <div class="acc rounded-xl3 bg-white shadow-card border border-g-100 overflow-hidden">
+    <button class="acc-head w-full text-left p-6 flex items-center gap-4">
+      <span class="flex-1"><span class="font-bold text-lg">근거 (Proof)</span><span class="block text-sm text-g-500 mt-1">인터뷰 · 근거 로그 · 시장/경쟁 분석</span></span>
+      <svg class="acc-chev shrink-0 text-g-400 transition-transform" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="acc-body"><div class="px-6 pb-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+      <div class="rounded-xl2 bg-g-50 border border-g-100 p-4"><p class="font-semibold text-g-800">JTBD 종합</p><p class="text-g-500 mt-1">07_JTBD — Job 선언, Outcome 표</p></div>
+      <div class="rounded-xl2 bg-g-50 border border-g-100 p-4"><p class="font-semibold text-g-800">근거 로그</p><p class="text-g-500 mt-1">Evidence Log — E-01~E-07</p></div>
+      <div class="rounded-xl2 bg-g-50 border border-g-100 p-4"><p class="font-semibold text-g-800">시장기회</p><p class="text-g-500 mt-1">06_Opportunity_Score — AOS·DOS</p></div>
+      <div class="rounded-xl2 bg-g-50 border border-g-100 p-4"><p class="font-semibold text-g-800">경쟁 벤치마크</p><p class="text-g-500 mt-1">경쟁사 분석 — 5개 기업</p></div>
+      <div class="rounded-xl2 bg-g-50 border border-g-100 p-4"><p class="font-semibold text-g-800">가치 제안</p><p class="text-g-500 mt-1">08_Value_Proposition — Fit 검사</p></div>
+      <div class="rounded-xl2 bg-g-50 border border-g-100 p-4"><p class="font-semibold text-g-800">시장 구조</p><p class="text-g-500 mt-1">윤정 01~04 — Five Forces 외</p></div>
+    </div></div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="bg-ink-900 text-white/60">
+  <div class="max-w-6xl mx-auto px-5 py-12">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+      <div>
+        <div class="flex items-center gap-2 text-white font-bold text-lg">
+          <span class="inline-grid place-items-center w-7 h-7 rounded-lg bg-brand-blue text-white text-sm">C</span> CardFit
+        </div>
+        <p class="mt-3 text-sm max-w-md leading-relaxed">CardFit PRD v0.1 · 미래지출 결제설계 서비스. 최종 업데이트 2026-08-20 · Owner 카드핏 프로덕트팀(초안: 가람 — 고객분석).</p>
+      </div>
+      <p class="text-xs text-white/40">이 페이지의 모든 지표·수치·수용 기준은 PRD·JTBD 원문을 그대로 반영합니다. 인터뷰 응답은 모의(가상) 데이터이며 실측 후 교체됩니다.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Accordions
+  document.querySelectorAll('.acc-head').forEach(function(btn){
+    btn.addEventListener('click', function(){ btn.closest('.acc').classList.toggle('open'); });
+  });
+  // Scroll reveal
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+</script>
+</body>
+</html>
