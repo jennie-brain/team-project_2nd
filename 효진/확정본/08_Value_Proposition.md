@@ -20,7 +20,7 @@ flowchart LR
     end
     subgraph VM["🎁 Value Map"]
         direction TB
-        S["F-01~F-04 · F-06<br/>미래 입력 → 조합 계산 → 근거 공개"]
+        S["F-01~F-04 · F-06<br/>미래 입력 → 조합 계산(적게·예상대로·많이)<br/>→ 근거 공개"]
         PR["Pain Relievers<br/>계산 대행 · 손실 가시화 · 근거 공개"]
         GC["Gain Creators<br/>Net Benefit 게이팅 · 유지도 정상 결과"]
     end
@@ -28,6 +28,7 @@ flowchart LR
     VM --> V["🏁 사용자가 스스로 검증한 숫자로<br/>결제 포트폴리오를 결정한다"]
     P -.->|"🔴 실행 마찰은<br/>대응 기능 없음"| GAP["Gap: 후보 C"]
     style GAP fill:#ffd6d6,stroke:#c00,color:#000
+    style S color:#c00
 ```
 
 ---
