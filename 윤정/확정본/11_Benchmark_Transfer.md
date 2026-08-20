@@ -162,6 +162,8 @@ flowchart TD
 
 ## 6. 🎯 To-Be 핵심 흐름
 
+<span style="color:red;">아래 흐름은 지출 시나리오(적게·예상대로·많이) 각각에 동일하게 적용된다.</span>
+
 ```mermaid
 flowchart TD
     A["마이데이터 연결<br/>현재 소비·보유카드 확인"] --> B["앞으로 큰 지출이 있나요?"]
