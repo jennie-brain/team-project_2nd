@@ -207,16 +207,16 @@ flowchart TD
     A2 --> A3["F-02 제약조건 입력<br/>(카드 수 등)"]
     A3 --> A4["F-03 시나리오 계산<br/>p95 ≤ 3,000ms"]
     A4 --> G{"Net Benefit이<br/>전환비용보다 큰가?"}
-    G -- "No" | "게이팅 실패" --> R1["'유지'를 권장<br/>(불필요한 전환 방지)"]
-    G -- "Yes" --> A5["F-04 보유·신규카드<br/>조합 비교, 최종 1안"]
+    G -->|"아니오 — 게이팅 실패"| R1["'유지'를 권장<br/>(불필요한 전환 방지)"]
+    G -->|"예"| A5["F-04 보유·신규카드<br/>조합 비교, 최종 1안"]
     A5 --> A6["F-06 계산 근거 공개<br/>p95 ≤ 1,000ms"]
     A6 --> D{"사용자가 조합을<br/>선택하는가?"}
-    D -- "Yes" --> KPI1["🎯 Payment Plan<br/>Selection Rate 집계"]
-    D -- "No" --> END1["여정 종료"]
+    D -->|"예"| KPI1["🎯 Payment Plan<br/>Selection Rate 집계"]
+    D -->|"아니오"| END1["여정 종료"]
     KPI1 --> W["30일 대기"]
-    W --> E{"실행(해지·전환)을<br/>완료했는가?<br/>(자기신고/재방문)"}
-    E -- "Yes" --> KPI2["📊 Execution Completion<br/>Rate 집계(완료)"]
-    E -- "No" --> KPI3["📊 Execution Completion<br/>Rate 집계(미완료) + 사유 수집"]
+    W --> E{"사용자가 실행(해지·전환)을<br/>완료했다고 자기신고/재방문으로<br/>확인됐는가?"}
+    E -->|"예 — 실행 완료"| KPI2["📊 Execution Completion Rate<br/>'완료' 건수로 집계"]
+    E -->|"아니오 — 실행 미완료"| KPI3["📊 Execution Completion Rate<br/>'미완료' 건수로 집계 + 사유 수집"]
     KPI3 -.->|"서비스는 개입하지 않음<br/>(직권·대행 권한 없음)"| END2["측정만 하고 종료"]
 
     style R1 fill:#FFE0B2,stroke:#E65100
