@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="760" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="760" height="600" fill="#1b1b1b"/>
+  <text x="380" y="35" text-anchor="middle" fill="#f0f0f0" font-size="19" font-family="sans-serif" font-weight="bold">AOS x DOS - 전체 6후보 SAM 버전 (median AOS 2.8, DOS 1.08)</text>
+
+  <rect x="80" y="60" width="570" height="460" fill="none" stroke="#888888" stroke-width="1.5"/>
+  <line x1="435" y1="60" x2="435" y2="520" stroke="#888888" stroke-width="1.5"/>
+  <line x1="80" y1="329" x2="650" y2="329" stroke="#888888" stroke-width="1.5"/>
+
+  <text x="257" y="82" text-anchor="middle" fill="#dddddd" font-size="15" font-family="sans-serif">시장 주도</text>
+  <text x="542" y="82" text-anchor="middle" fill="#dddddd" font-size="15" font-family="sans-serif">최우선</text>
+  <text x="257" y="342" text-anchor="middle" fill="#dddddd" font-size="15" font-family="sans-serif">후순위</text>
+  <text x="542" y="342" text-anchor="middle" fill="#dddddd" font-size="15" font-family="sans-serif">니치</text>
+
+  <!-- A: AOS 4.0, DOS 2.32 -->
+  <circle cx="587" cy="110" r="6" fill="#cccccc"/>
+  <text x="645" y="96" text-anchor="end" fill="#f5f5f5" font-size="13" font-family="sans-serif">A 미래지출연결 (AOS 4.0, DOS 2.32)</text>
+
+  <!-- C: AOS 3.2, DOS 2.40 -->
+  <circle cx="485" cy="95" r="6" fill="#cccccc"/>
+  <text x="485" y="121" text-anchor="middle" fill="#f5f5f5" font-size="13" font-family="sans-serif">C 실행완주 (AOS 3.2, DOS 2.40)</text>
+
+  <!-- B: AOS 2.4, DOS 1.26 -->
+  <circle cx="384" cy="297" r="6" fill="#cccccc"/>
+  <text x="384" y="283" text-anchor="middle" fill="#f5f5f5" font-size="13" font-family="sans-serif">B 신뢰근거 (AOS 2.4, DOS 1.26)</text>
+
+  <!-- F: AOS 3.2, DOS 0.90 -->
+  <circle cx="485" cy="361" r="6" fill="#cccccc"/>
+  <text x="485" y="383" text-anchor="middle" fill="#f5f5f5" font-size="13" font-family="sans-serif">F 이벤트비종속 (AOS 3.2, DOS 0.90)</text>
+
+  <!-- E: AOS 1.8, DOS 0.57 -->
+  <circle cx="308" cy="419" r="6" fill="#cccccc"/>
+  <text x="295" y="414" text-anchor="end" fill="#f5f5f5" font-size="13" font-family="sans-serif">E 지속사용 (AOS 1.8, DOS 0.57)</text>
+
+  <!-- D: AOS 1.8, DOS 0.48 -->
+  <circle cx="308" cy="435" r="6" fill="#cccccc"/>
+  <text x="321" y="445" text-anchor="start" fill="#f5f5f5" font-size="13" font-family="sans-serif">D 입력유연성 (AOS 1.8, DOS 0.48)</text>
+
+  <text x="20" y="68" text-anchor="start" fill="#dddddd" font-size="13" font-family="sans-serif">High DOS</text>
+  <text x="20" y="515" text-anchor="start" fill="#dddddd" font-size="13" font-family="sans-serif">Low DOS</text>
+  <text x="257" y="545" text-anchor="middle" fill="#dddddd" font-size="14" font-family="sans-serif">Low AOS</text>
+  <text x="542" y="545" text-anchor="middle" fill="#dddddd" font-size="14" font-family="sans-serif">High AOS</text>
+</svg>
