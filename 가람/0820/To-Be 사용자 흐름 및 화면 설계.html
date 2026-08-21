@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CardFit · To-Be 사용자 흐름 및 화면 설계</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: { extend: {
+    fontFamily: { sans: ['Pretendard','-apple-system','system-ui','sans-serif'] },
+    colors: {
+      brand: { blue:'#3182F6', deep:'#0064FF' },
+      ink:   { 900:'#101318', 800:'#191F28' },
+      g: {50:'#F9FAFB',100:'#F2F4F6',200:'#E5E8EB',300:'#D1D6DB',400:'#B0B8C1',500:'#8B95A1',600:'#6B7684',700:'#4E5968',800:'#333D4B',900:'#191F28'}
+    },
+    boxShadow: {
+      phone:'0 30px 60px -20px rgba(16,19,24,.35), 0 10px 24px -12px rgba(16,19,24,.25)',
+      card:'0 1px 2px rgba(0,0,0,.04), 0 4px 14px rgba(0,0,0,.05)'
+    }
+  }}
+}
+</script>
+<style>
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+  body{-webkit-font-smoothing:antialiased}
+  /* phone */
+  .phone{width:340px;border-radius:44px;background:#111;padding:11px;box-shadow:var(--tw-shadow,);}
+  .screen{position:relative;width:100%;height:720px;background:#fff;border-radius:34px;overflow:hidden;display:flex;flex-direction:column}
+  .scr-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .scr-scroll::-webkit-scrollbar{width:0}
+  /* status bar */
+  .statusbar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;font-size:13px;font-weight:600;color:#191F28;flex-shrink:0}
+  /* progress */
+  .steps{display:flex;gap:5px;padding:6px 20px 2px}
+  .steps i{height:3px;border-radius:3px;flex:1;background:#E5E8EB}
+  .steps i.on{background:#3182F6}
+  /* primary btn dock */
+  .dock{padding:12px 20px 22px;background:linear-gradient(180deg,rgba(255,255,255,0),#fff 22%);flex-shrink:0}
+  .btn{width:100%;height:54px;border-radius:16px;background:#3182F6;color:#fff;font-weight:700;font-size:16px;border:0;cursor:pointer}
+  .btn:hover{background:#1F6FEB}
+  .btn-ghost{width:100%;height:54px;border-radius:16px;background:#F2F4F6;color:#4E5968;font-weight:700;font-size:16px;border:0;cursor:pointer}
+  /* accordion inside screen */
+  .acc>.body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+  .acc.open>.body{max-height:600px}
+  .acc.open .chev{transform:rotate(180deg)}
+  .chev{transition:transform .3s}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:26px;background:#111;border-radius:0 0 18px 18px;z-index:20}
+
+  /* ===== to-be flow ===== */
+  .wire{width:2px;height:26px;background:#D1D6DB;margin:5px auto;position:relative}
+  .wire::after{content:"";position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #D1D6DB}
+  .wire .lbl{position:absolute;left:calc(50% + 12px);top:50%;transform:translateY(-50%);font-size:11px;font-weight:800;color:#3182F6;white-space:nowrap}
+  .fstart{max-width:560px;margin:0 auto;text-align:center;background:#191F28;color:#fff;border-radius:999px;padding:13px 20px;font-weight:700;font-size:14px}
+  .fnode{max-width:560px;margin:0 auto;background:#fff;border:1px solid #E5E8EB;border-radius:16px;padding:13px 18px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .fnode.key{border-color:#3182F6;background:#F5F9FF}
+  .fnode.sys{background:#F2F4F6;border-style:dashed;color:#6B7684}
+  .fnode .ft{display:inline-flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .tag{font-size:11px;font-weight:800;padding:2px 7px;border-radius:6px}
+  .tag-f{background:#E7F1FF;color:#1F6FEB}
+  .tag-s{background:#191F28;color:#fff}
+  .diamond{max-width:560px;margin:0 auto;text-align:center;background:#FFF8E8;border:1.5px solid #F2C94C;border-radius:14px;padding:13px 18px;font-weight:800;color:#8A5A00;font-size:14px}
+  .aside{max-width:560px;margin:8px auto 0;border-left:3px solid #D1D6DB;background:#F9FAFB;border-radius:0 12px 12px 0;padding:10px 14px;color:#6B7684;font-size:13px;line-height:1.5}
+  .aside b{color:#4E5968}
+</style>
+</head>
+
+<body class="bg-g-100 text-g-900 font-sans">
+
+<!-- board header -->
+<header class="sticky top-0 z-50 bg-ink-900 text-white">
+  <div class="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="inline-grid place-items-center w-8 h-8 rounded-xl bg-brand-blue font-bold">C</span>
+      <div>
+        <p class="font-bold leading-tight">To-Be 사용자 흐름 및 화면 설계</p>
+        <p class="text-xs text-white/50 leading-tight">CardFit v0.1 · 흐름도 → 화면 매핑</p>
+      </div>
+    </div>
+    <p class="hidden sm:block text-xs text-white/45">화면 내 금액은 목업 예시값 · 로직은 PRD 원문 준수(결정론적 계산·근거 공개·해지 대행 없음)</p>
+  </div>
+</header>
+
+<!-- page intro -->
+<div class="max-w-[1400px] mx-auto px-6 pt-9">
+  <p class="text-brand-blue font-bold text-sm">To-Be Service</p>
+  <h1 class="mt-1 text-3xl sm:text-4xl font-extrabold tracking-tight">사용자 흐름 및 화면 설계</h1>
+  <p class="mt-3 text-g-600 leading-relaxed max-w-2xl">경쟁자 흐름은 <b class="text-g-800">과거 소비 조달 → 단일 카드 매칭</b>에서 끝나지만, CardFit의 To-Be 흐름은 <b class="text-g-800">미래 의도 포착 → 시나리오 모델링 → 제약 최적화 → 결제수단 배분</b>까지 확장됩니다.</p>
+</div>
+
+<!-- flow legend -->
+<div class="max-w-[1400px] mx-auto px-6 pt-8">
+  <div class="flex flex-wrap items-center gap-2 text-xs font-medium text-g-600">
+    <span class="px-2.5 py-1 rounded-full bg-white shadow-card">① 트리거</span>
+    <span class="text-g-300">›</span>
+    <span class="px-2.5 py-1 rounded-full bg-white shadow-card">② 인지</span>
+    <span class="text-g-300">›</span>
+    <span class="px-2.5 py-1 rounded-full bg-brand-blue text-white shadow-card">③ 온보딩·입력</span>
+    <span class="text-g-300">›</span>
+    <span class="px-2.5 py-1 rounded-full bg-brand-blue text-white shadow-card">④ 계산결과</span>
+    <span class="text-g-300">›</span>
+    <span class="px-2.5 py-1 rounded-full bg-white shadow-card">⑤ 신규카드 비교</span>
+    <span class="text-g-300">›</span>
+    <span class="px-2.5 py-1 rounded-full bg-brand-blue text-white shadow-card">⑥ 실행</span>
+    <span class="text-g-300">›</span>
+    <span class="px-2.5 py-1 rounded-full bg-white shadow-card">⑦ 구매 후</span>
+  </div>
+</div>
+
+<!-- ============ TO-BE USER FLOW ============ -->
+<section class="max-w-[1400px] mx-auto px-6 pt-10">
+  <div class="flex items-center gap-3 mb-6">
+    <span class="text-lg font-extrabold tracking-tight">1 · To-Be 사용자 흐름</span>
+    <span class="text-xs text-g-500">— 분기 로직 포함 · 각 노드에 대응 화면(S#) 표기</span>
+  </div>
+
+  <div class="rounded-3xl bg-g-50 border border-g-200 p-6 sm:p-10">
+    <div class="fstart">① 트리거 · 소비 구조가 곧 바뀜 (혼인·이사·이직·자녀 독립 등)</div>
+    <div class="wire"></div>
+
+    <div class="fnode key">
+      <p class="font-bold">② 마이데이터 연동 — 보유 카드·과거 소비 자동 수집</p>
+      <span class="ft"><span class="tag tag-f">F-02</span><span class="tag tag-s">화면 S1</span></span>
+    </div>
+    <div class="wire"></div>
+
+    <div class="fnode key">
+      <p class="font-bold">③ 미래 지출 입력 — 카테고리·금액·시점</p>
+      <p class="text-[13px] text-g-500 mt-1">이벤트 라벨은 선택사항(강제 없음) · 증가/감소 양방향 처리</p>
+      <span class="ft"><span class="tag tag-f">F-01</span><span class="tag tag-s">화면 S2</span></span>
+    </div>
+    <div class="wire"></div>
+
+    <div class="fnode">
+      <p class="font-bold">④ 제약조건 입력 — 카드 최대 개수·연회비 상한·신규 발급 허용</p>
+      <span class="ft"><span class="tag tag-f">F-02</span><span class="tag tag-s">화면 S3</span></span>
+    </div>
+    <div class="wire"></div>
+
+    <div class="fnode sys">
+      <p class="font-bold text-g-700">⑤ 시나리오 계산 — 실적구간·한도·연회비 반영 순혜택 산출</p>
+      <p class="text-[13px] mt-1">결정론적 규칙 엔진 · AI는 근거 설명(자연어)에만 사용</p>
+      <span class="ft"><span class="tag tag-f">F-03</span></span>
+    </div>
+    <div class="wire"></div>
+
+    <div class="dec-wrap">
+      <div class="diamond">◆ 추천 조합이 현재보다 유리한가? <span class="font-semibold">(Net Benefit 게이팅)</span></div>
+      <div class="aside"><b>아니오 →</b> 현재 조합 유지 권고 · 불필요한 신규카드 추천 방지 → 근거 공개 후 종료</div>
+    </div>
+    <div class="wire"><span class="lbl">예 ↓</span></div>
+
+    <div class="fnode key">
+      <p class="font-bold">⑥ 최종 1안 제시 + 차액(원 단위) 표시</p>
+      <p class="text-[13px] text-g-500 mt-1">└ 계산 근거 공개(실적·한도·연회비 항목별 + 제외 비용 명시) — 언제든 열람</p>
+      <span class="ft"><span class="tag tag-f">F-04</span><span class="tag tag-f">F-06</span><span class="tag tag-s">화면 S4·S5</span></span>
+    </div>
+    <div class="wire"></div>
+
+    <div class="dec-wrap">
+      <div class="diamond">◆ 이 조합을 선택하는가? <span class="font-semibold">· 북극성 Payment Plan Selection Rate ≥ 40%</span></div>
+      <div class="aside"><b>미선택 →</b> 이탈 (측정만, 후속 액션 없음)</div>
+    </div>
+    <div class="wire"><span class="lbl">선택 ↓</span></div>
+
+    <div class="fnode">
+      <p class="font-bold">⑦ 실행 안내 — 효과 큰 카드부터 단계적 순서 안내</p>
+      <p class="text-[13px] text-g-500 mt-1">해지·발급 대행 없음 (마이데이터 서비스는 직권·대행 권한 없음)</p>
+      <span class="ft"><span class="tag tag-s">화면 S6</span></span>
+    </div>
+    <div class="wire"></div>
+
+    <div class="fnode sys"><p class="font-bold text-g-700">⏱ 30일 경과 · 재방문 / 알림</p></div>
+    <div class="wire"></div>
+
+    <div class="dec-wrap">
+      <div class="diamond">◆ 실제로 해지·전환을 완주했는가? <span class="font-semibold">· Execution Completion Rate</span></div>
+      <div class="aside"><b>예 →</b> 완료로 집계</div>
+      <div class="aside"><b>아니오 →</b> 사유 태깅(상담사 만류 / 시간 부족 / 기타) → 집계</div>
+      <p class="max-w-[560px] mx-auto mt-3 text-[12px] text-g-400 text-center">측정 전용 · 어떤 후속 액션도 자동 트리거하지 않음 · 선택 후 미실행 격차 20%p↑ 시 경보</p>
+    </div>
+    <div class="mt-5 max-w-[560px] mx-auto text-center"><span class="fstart" style="display:inline-block;padding:10px 22px">완주 측정 완료</span></div>
+  </div>
+</section>
+
+<!-- screen-design section heading -->
+<div class="max-w-[1400px] mx-auto px-6 pt-14">
+  <div class="flex items-center gap-3">
+    <span class="text-lg font-extrabold tracking-tight">2 · 화면 설계</span>
+    <span class="text-xs text-g-500">— 위 흐름의 각 단계에 대응하는 실제 화면 (S1~S7)</span>
+  </div>
+</div>
+
+<!-- ============ SCREEN BOARD ============ -->
+<main class="max-w-[1400px] mx-auto px-6 py-10">
+  <div class="flex flex-wrap justify-center gap-x-8 gap-y-14">
+
+    <!-- ============ 01. 마이데이터 연동 (F-02) ============ -->
+    <div class="w-[340px]">
+      <div class="phone shadow-phone"><div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●● 5G ▮</span></div>
+          <div class="scr-scroll px-6">
+            <div class="pt-4">
+              <div class="w-11 h-11 rounded-2xl bg-blue-50 grid place-items-center mb-6">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v6c0 4-3 6.5-7 9-4-2.5-7-5-7-9V6l7-3z" stroke="#3182F6" stroke-width="1.8" stroke-linejoin="round"/></svg>
+              </div>
+              <h1 class="text-[26px] font-extrabold leading-snug tracking-tight">내 카드와 소비를<br/>한 번에 불러올게요</h1>
+              <p class="mt-3 text-[15px] text-g-600 leading-relaxed">마이데이터로 보유 카드·과거 소비를 자동으로 가져와요. 직접 입력할 필요 없어요.</p>
+
+              <div class="mt-6 rounded-2xl bg-g-50 border border-g-100 p-4 space-y-3">
+                <p class="text-xs font-bold text-g-500">가져오는 정보</p>
+                <div class="flex items-center gap-3 text-[15px]"><span class="text-brand-blue">✓</span> 보유 카드·상품명</div>
+                <div class="flex items-center gap-3 text-[15px]"><span class="text-brand-blue">✓</span> 최근 소비 내역</div>
+                <div class="flex items-center gap-3 text-[15px]"><span class="text-brand-blue">✓</span> 카드별 실적·연회비</div>
+              </div>
+
+              <div class="mt-3 flex items-start gap-2 text-[13px] text-g-500 leading-relaxed">
+                <svg class="mt-0.5 shrink-0" width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#8B95A1" stroke-width="1.6"/><path d="M12 8v5m0 3h.01" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round"/></svg>
+                동의 항목·기간을 직접 고를 수 있고, 언제든 연동을 해제할 수 있어요.
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <button class="btn">마이데이터 연동하기</button>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 text-center">
+        <p class="text-sm font-bold text-g-800"><span class="text-brand-blue">S1</span> · ③ 온보딩 · 마이데이터 연동</p>
+        <p class="text-xs text-g-500 mt-0.5">목표 : 자동 수집 동의 &nbsp;·&nbsp; 액션 : 연동하기 &nbsp;·&nbsp; <span class="text-brand-blue font-semibold">F-02</span></p>
+      </div>
+    </div>
+
+    <!-- ============ 02. 미래 지출 입력 (F-01) ============ -->
+    <div class="w-[340px]">
+      <div class="phone shadow-phone"><div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●● 5G ▮</span></div>
+          <div class="steps"><i class="on"></i><i class="on"></i><i></i></div>
+          <div class="scr-scroll px-6">
+            <div class="pt-4">
+              <h1 class="text-[24px] font-extrabold leading-snug tracking-tight">앞으로 지출이<br/>어떻게 바뀌나요?</h1>
+              <p class="mt-2 text-[14px] text-g-600 leading-relaxed">곧 바뀔 지출만 알려주면, 그 변화까지 반영해 계산해요.</p>
+
+              <!-- 초기값 자동 제안 (Should) -->
+              <div class="mt-4 flex items-center gap-2 rounded-xl bg-blue-50 px-3 py-2.5">
+                <span class="text-brand-blue text-sm">✨</span>
+                <p class="text-[13px] text-brand-deep leading-snug">과거 패턴으로 <b>초기값을 미리 채워</b> 뒀어요. 다르면 수정하세요.</p>
+              </div>
+
+              <!-- 입력 카드 1 -->
+              <div class="mt-4 rounded-2xl border border-g-200 p-4">
+                <div class="flex items-center justify-between">
+                  <span class="text-[15px] font-bold">가전·가구</span>
+                  <div class="flex rounded-lg bg-g-100 p-0.5 text-xs font-bold">
+                    <span class="px-2.5 py-1 rounded-md bg-white text-brand-blue shadow-sm">늘어남</span>
+                    <span class="px-2.5 py-1 rounded-md text-g-500">줄어듦</span>
+                  </div>
+                </div>
+                <div class="mt-3 flex items-end justify-between">
+                  <span class="text-[13px] text-g-500">예상 금액</span>
+                  <span class="text-[22px] font-extrabold tracking-tight">3,200,000<span class="text-sm text-g-500 font-bold">원</span></span>
+                </div>
+                <div class="mt-2 flex items-center gap-2 text-[13px] text-g-500">
+                  <span>시점</span><span class="ml-auto font-semibold text-g-700">다음 달부터 3개월</span>
+                </div>
+              </div>
+
+              <!-- 입력 카드 2 -->
+              <div class="mt-3 rounded-2xl border border-g-200 p-4">
+                <div class="flex items-center justify-between">
+                  <span class="text-[15px] font-bold">외식·배달</span>
+                  <div class="flex rounded-lg bg-g-100 p-0.5 text-xs font-bold">
+                    <span class="px-2.5 py-1 rounded-md text-g-500">늘어남</span>
+                    <span class="px-2.5 py-1 rounded-md bg-white text-brand-blue shadow-sm">줄어듦</span>
+                  </div>
+                </div>
+                <div class="mt-3 flex items-end justify-between">
+                  <span class="text-[13px] text-g-500">예상 금액</span>
+                  <span class="text-[22px] font-extrabold tracking-tight">-180,000<span class="text-sm text-g-500 font-bold">원/월</span></span>
+                </div>
+              </div>
+
+              <button class="mt-3 w-full h-12 rounded-xl border border-dashed border-g-300 text-g-500 font-semibold text-[15px]">+ 지출 변화 추가</button>
+
+              <!-- 이벤트 라벨 = 선택사항 (F) -->
+              <div class="mt-4 flex items-center gap-2 text-[13px] text-g-500">
+                <span>상황 태그(선택)</span>
+                <span class="ml-auto px-2.5 py-1 rounded-full bg-g-100 font-semibold text-g-500">선택 안 함</span>
+              </div>
+              <div class="h-3"></div>
+            </div>
+          </div>
+          <div class="dock"><button class="btn">다음</button></div>
+        </div>
+      </div>
+      <div class="mt-4 text-center">
+        <p class="text-sm font-bold text-g-800"><span class="text-brand-blue">S2</span> · ③ 미래 지출 변화 입력</p>
+        <p class="text-xs text-g-500 mt-0.5">이벤트 선택 강제 없음 · 증가/감소 양방향 · <span class="text-brand-blue font-semibold">F-01</span></p>
+      </div>
+    </div>
+
+    <!-- ============ 03. 제약조건 입력 ============ -->
+    <div class="w-[340px]">
+      <div class="phone shadow-phone"><div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●● 5G ▮</span></div>
+          <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i></div>
+          <div class="scr-scroll px-6">
+            <div class="pt-4">
+              <h1 class="text-[24px] font-extrabold leading-snug tracking-tight">조건을 정해주세요</h1>
+              <p class="mt-2 text-[14px] text-g-600 leading-relaxed">이 조건 안에서 가장 유리한 조합을 찾아드려요.</p>
+
+              <div class="mt-5 rounded-2xl border border-g-200 divide-y divide-g-100">
+                <div class="p-4 flex items-center justify-between">
+                  <div><p class="text-[15px] font-bold">쓸 카드 최대 개수</p><p class="text-[13px] text-g-500 mt-0.5">지갑에 둘 카드 수</p></div>
+                  <div class="flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-full bg-g-100 grid place-items-center font-bold text-g-500">−</span>
+                    <span class="text-[18px] font-extrabold w-5 text-center">3</span>
+                    <span class="w-8 h-8 rounded-full bg-blue-50 grid place-items-center font-bold text-brand-blue">+</span>
+                  </div>
+                </div>
+                <div class="p-4 flex items-center justify-between">
+                  <div><p class="text-[15px] font-bold">연회비 상한</p><p class="text-[13px] text-g-500 mt-0.5">연간 부담 한도</p></div>
+                  <span class="text-[15px] font-bold text-g-800">10만원</span>
+                </div>
+                <label class="p-4 flex items-center justify-between cursor-pointer">
+                  <div><p class="text-[15px] font-bold">신규 카드 발급 허용</p><p class="text-[13px] text-g-500 mt-0.5">추천에 새 카드 포함</p></div>
+                  <span class="w-11 h-6 rounded-full bg-brand-blue relative"><span class="absolute right-0.5 top-0.5 w-5 h-5 bg-white rounded-full"></span></span>
+                </label>
+              </div>
+
+              <div class="mt-4 rounded-2xl bg-g-50 border border-g-100 p-4">
+                <p class="text-[13px] font-bold text-g-500 mb-2">불러온 내 카드 · 4장</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1.5 rounded-lg bg-white border border-g-200 text-[13px] font-semibold">신한 Deep Dream</span>
+                  <span class="px-3 py-1.5 rounded-lg bg-white border border-g-200 text-[13px] font-semibold">현대 ZERO</span>
+                  <span class="px-3 py-1.5 rounded-lg bg-white border border-g-200 text-[13px] font-semibold">삼성 taptap</span>
+                  <span class="px-3 py-1.5 rounded-lg bg-white border border-g-200 text-[13px] font-semibold">국민 톡톡</span>
+                </div>
+              </div>
+              <div class="h-3"></div>
+            </div>
+          </div>
+          <div class="dock"><button class="btn">최적 조합 계산하기</button></div>
+        </div>
+      </div>
+      <div class="mt-4 text-center">
+        <p class="text-sm font-bold text-g-800"><span class="text-brand-blue">S3</span> · ③ 제약조건 입력</p>
+        <p class="text-xs text-g-500 mt-0.5">카드 수·연회비 한도 등 · 보유카드 자동 표시 · <span class="text-brand-blue font-semibold">F-02</span></p>
+      </div>
+    </div>
+
+    <!-- ============ 04. 계산 결과 · 차액 (F-03/F-04) ============ -->
+    <div class="w-[340px]">
+      <div class="phone shadow-phone"><div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●● 5G ▮</span></div>
+          <div class="scr-scroll">
+            <!-- hero result -->
+            <div class="bg-ink-900 text-white px-6 pt-6 pb-8 rounded-b-[28px]">
+              <p class="text-[14px] text-white/60">추천 조합으로 바꾸면</p>
+              <p class="mt-2 text-[34px] font-extrabold tracking-tight leading-none">연 <span class="text-brand-blue">312,000원</span></p>
+              <p class="mt-2 text-[15px] text-white/80">지금보다 더 받을 수 있어요</p>
+              <div class="mt-5 grid grid-cols-2 gap-2 text-center">
+                <div class="rounded-xl bg-white/10 py-3">
+                  <p class="text-[12px] text-white/50">현재 조합</p>
+                  <p class="mt-1 font-bold">연 84,000원</p>
+                </div>
+                <div class="rounded-xl bg-brand-blue py-3">
+                  <p class="text-[12px] text-white/70">추천 조합</p>
+                  <p class="mt-1 font-bold">연 396,000원</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="px-6 pt-5">
+              <p class="text-[13px] font-bold text-g-500 mb-2">추천 최종 1안</p>
+              <div class="rounded-2xl border border-g-200 p-4 space-y-3">
+                <div class="flex items-center gap-3">
+                  <span class="w-9 h-9 rounded-lg bg-emerald-50 grid place-items-center text-emerald-600 font-bold text-sm">유지</span>
+                  <div class="flex-1"><p class="text-[15px] font-bold">신한 Deep Dream</p><p class="text-[13px] text-g-500">가전·가구 5% 적립</p></div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="w-9 h-9 rounded-lg bg-blue-50 grid place-items-center text-brand-blue font-bold text-sm">신규</span>
+                  <div class="flex-1"><p class="text-[15px] font-bold">우리 카드의정석 EVERY</p><p class="text-[13px] text-g-500">생활비 통합 할인</p></div>
+                </div>
+                <div class="flex items-center gap-3 opacity-60">
+                  <span class="w-9 h-9 rounded-lg bg-g-100 grid place-items-center text-g-500 font-bold text-sm">해지</span>
+                  <div class="flex-1"><p class="text-[15px] font-bold">삼성 taptap</p><p class="text-[13px] text-g-500">연회비 대비 혜택 부족</p></div>
+                </div>
+              </div>
+
+              <button onclick="this.closest('.screen').querySelectorAll('.gotoproof').forEach(e=>{})" class="mt-3 w-full h-12 rounded-xl bg-g-100 text-g-700 font-bold text-[15px]">계산 근거 보기</button>
+              <div class="h-3"></div>
+            </div>
+          </div>
+          <div class="dock"><button class="btn">이 조합 선택하기</button></div>
+        </div>
+      </div>
+      <div class="mt-4 text-center">
+        <p class="text-sm font-bold text-g-800"><span class="text-brand-blue">S4</span> · ④ 계산 결과 · 차액</p>
+        <p class="text-xs text-g-500 mt-0.5">차액 원 단위 · 최종 1안 제시 · 액션=선택(북극성) · <span class="text-brand-blue font-semibold">F-03·F-04</span></p>
+      </div>
+    </div>
+
+    <!-- ============ 05. 계산 근거 보기 (F-06) · 아코디언 ============ -->
+    <div class="w-[340px]">
+      <div class="phone shadow-phone"><div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●● 5G ▮</span></div>
+          <div class="px-6 pt-2 pb-1 flex items-center gap-3 flex-shrink-0">
+            <span class="text-g-500 text-xl">‹</span><span class="font-bold text-[17px]">계산 근거</span>
+          </div>
+          <div class="scr-scroll px-6">
+            <p class="pt-2 text-[14px] text-g-600 leading-relaxed">왜 이 조합인지, 적용한 규칙을 항목별로 열어볼 수 있어요.</p>
+
+            <!-- accordion 1 -->
+            <div class="acc open mt-4 rounded-2xl border border-g-200 overflow-hidden">
+              <button class="head w-full text-left p-4 flex items-center justify-between">
+                <span class="text-[15px] font-bold">실적 구간</span>
+                <svg class="chev text-g-400" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="body"><div class="px-4 pb-4 text-[13.5px] text-g-600 space-y-2">
+                <div class="flex justify-between"><span>전월 실적</span><span class="font-semibold text-g-800">1,050,000원</span></div>
+                <div class="flex justify-between"><span>적용 구간</span><span class="font-semibold text-g-800">100만원↑ 구간</span></div>
+                <div class="flex justify-between"><span>구간 적립률</span><span class="font-semibold text-brand-blue">5.0%</span></div>
+              </div></div>
+            </div>
+
+            <!-- accordion 2 -->
+            <div class="acc mt-3 rounded-2xl border border-g-200 overflow-hidden">
+              <button class="head w-full text-left p-4 flex items-center justify-between">
+                <span class="text-[15px] font-bold">혜택 한도</span>
+                <svg class="chev text-g-400" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="body"><div class="px-4 pb-4 text-[13.5px] text-g-600 space-y-2">
+                <div class="flex justify-between"><span>월 적립 한도</span><span class="font-semibold text-g-800">20,000원</span></div>
+                <div class="flex justify-between"><span>이번 달 적용</span><span class="font-semibold text-g-800">한도까지 채움</span></div>
+              </div></div>
+            </div>
+
+            <!-- accordion 3 -->
+            <div class="acc mt-3 rounded-2xl border border-g-200 overflow-hidden">
+              <button class="head w-full text-left p-4 flex items-center justify-between">
+                <span class="text-[15px] font-bold">연회비</span>
+                <svg class="chev text-g-400" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="body"><div class="px-4 pb-4 text-[13.5px] text-g-600 space-y-2">
+                <div class="flex justify-between"><span>신규 카드 연회비</span><span class="font-semibold text-g-800">-15,000원</span></div>
+                <div class="flex justify-between"><span>순혜택 반영</span><span class="font-semibold text-g-800">차감 후 계산</span></div>
+              </div></div>
+            </div>
+
+            <!-- 제외 비용 명시 (AC2) -->
+            <div class="mt-4 rounded-2xl bg-amber-50 border border-amber-100 p-4">
+              <p class="text-[13px] font-bold text-amber-700 mb-1.5">이 계산에는 포함되지 않았습니다</p>
+              <ul class="text-[13px] text-amber-800/90 space-y-1">
+                <li>· 기존 카드 잔여 포인트 소멸</li>
+                <li>· 자동납부 이전 시 승계 여부</li>
+              </ul>
+            </div>
+            <p class="mt-3 text-[12px] text-g-400 leading-relaxed">혜택 금액은 규칙 기반으로 계산돼요. AI는 근거 설명에만 쓰이고, 금액을 임의로 만들지 않아요.</p>
+            <div class="h-4"></div>
+          </div>
+          <div class="dock"><button class="btn-ghost">결과로 돌아가기</button></div>
+        </div>
+      </div>
+      <div class="mt-4 text-center">
+        <p class="text-sm font-bold text-g-800"><span class="text-brand-blue">S5</span> · ④ 계산 근거 보기 <span class="text-brand-blue">(아코디언)</span></p>
+        <p class="text-xs text-g-500 mt-0.5">실적·한도·연회비 항목별 · 제외 비용 명시 · <span class="text-brand-blue font-semibold">F-06</span></p>
+      </div>
+    </div>
+
+    <!-- ============ 06. 실행 안내 (⑥) ============ -->
+    <div class="w-[340px]">
+      <div class="phone shadow-phone"><div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●● 5G ▮</span></div>
+          <div class="scr-scroll px-6">
+            <div class="pt-4">
+              <div class="rounded-xl bg-blue-50 px-3 py-2 inline-flex items-center gap-2 text-[13px] font-semibold text-brand-deep">✓ 이 조합을 선택했어요</div>
+              <h1 class="mt-4 text-[24px] font-extrabold leading-snug tracking-tight">이대로 바꾸려면<br/>이렇게 하세요</h1>
+              <p class="mt-2 text-[14px] text-g-600 leading-relaxed">해지·발급은 각 카드사에서 진행돼요. 순서대로 따라가면 돼요.</p>
+
+              <ol class="mt-5 space-y-3">
+                <li class="rounded-2xl border border-g-200 p-4 flex gap-3">
+                  <span class="w-6 h-6 rounded-full bg-brand-blue text-white grid place-items-center text-xs font-bold shrink-0">1</span>
+                  <div><p class="text-[15px] font-bold">우리 카드의정석 EVERY 발급</p><p class="text-[13px] text-g-500 mt-0.5">효과가 가장 큰 카드부터</p></div>
+                </li>
+                <li class="rounded-2xl border border-g-200 p-4 flex gap-3">
+                  <span class="w-6 h-6 rounded-full bg-g-200 text-g-600 grid place-items-center text-xs font-bold shrink-0">2</span>
+                  <div><p class="text-[15px] font-bold">삼성 taptap 해지</p><p class="text-[13px] text-g-500 mt-0.5">발급 완료 후 진행하세요</p></div>
+                </li>
+              </ol>
+
+              <div class="mt-4 flex items-start gap-2 rounded-xl bg-g-50 border border-g-100 p-3 text-[12.5px] text-g-500 leading-relaxed">
+                <svg class="mt-0.5 shrink-0" width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#8B95A1" stroke-width="1.6"/><path d="M12 8v5m0 3h.01" stroke="#8B95A1" stroke-width="1.8" stroke-linecap="round"/></svg>
+                CardFit은 해지·발급을 대신 진행하지 않아요. 실행은 직접, 우리는 근거만 제공해요.
+              </div>
+              <div class="h-3"></div>
+            </div>
+          </div>
+          <div class="dock">
+            <button class="btn">단계별 안내 보기</button>
+            <p class="mt-2 text-center text-[13px] text-g-500">나중에 할게요</p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 text-center">
+        <p class="text-sm font-bold text-g-800"><span class="text-brand-blue">S6</span> · ⑥ 실행 안내</p>
+        <p class="text-xs text-g-500 mt-0.5">단계적 순서 안내(근거만) · 대행/상담 없음 · <span class="text-g-500 font-semibold">Won't 준수</span></p>
+      </div>
+    </div>
+
+    <!-- ============ 07. 완주 측정 (⑦ / Job C) ============ -->
+    <div class="w-[340px]">
+      <div class="phone shadow-phone"><div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span>●●● 5G ▮</span></div>
+          <div class="scr-scroll px-6">
+            <div class="pt-4">
+              <p class="text-[13px] font-semibold text-g-500">추천 후 30일 · 다시 방문</p>
+              <h1 class="mt-2 text-[24px] font-extrabold leading-snug tracking-tight">지난번 추천,<br/>실제로 바꾸셨어요?</h1>
+              <p class="mt-2 text-[14px] text-g-600 leading-relaxed">결과를 알려주시면 “선택 후 실행” 격차를 줄이는 데 써요.</p>
+
+              <div class="mt-6 space-y-3">
+                <button class="w-full rounded-2xl border-2 border-brand-blue bg-blue-50 p-4 text-left flex items-center gap-3">
+                  <span class="text-brand-blue text-lg">✓</span>
+                  <span class="text-[15px] font-bold text-brand-deep">네, 완료했어요</span>
+                </button>
+                <button class="w-full rounded-2xl border border-g-200 p-4 text-left">
+                  <span class="text-[15px] font-bold">아직 못 했어요</span>
+                </button>
+              </div>
+
+              <!-- 미완료 사유 (AC3) -->
+              <div class="mt-5 rounded-2xl bg-g-50 border border-g-100 p-4">
+                <p class="text-[13px] font-bold text-g-500 mb-2.5">아직이라면, 이유는요? (선택)</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1.5 rounded-full bg-white border border-g-200 text-[13px] font-semibold">상담사 만류</span>
+                  <span class="px-3 py-1.5 rounded-full bg-white border border-g-200 text-[13px] font-semibold">시간 부족</span>
+                  <span class="px-3 py-1.5 rounded-full bg-white border border-g-200 text-[13px] font-semibold">기타</span>
+                </div>
+              </div>
+
+              <p class="mt-3 text-[12px] text-g-400 leading-relaxed">이 응답은 지표 집계에만 쓰여요. 대신 처리하거나 다른 동작을 자동으로 실행하지 않아요.</p>
+              <div class="h-3"></div>
+            </div>
+          </div>
+          <div class="dock"><button class="btn">보내기</button></div>
+        </div>
+      </div>
+      <div class="mt-4 text-center">
+        <p class="text-sm font-bold text-g-800"><span class="text-brand-blue">S7</span> · ⑦ 실행 완주 측정</p>
+        <p class="text-xs text-g-500 mt-0.5">자기신고+재방문 · 사유 태깅 · 후속 액션 없음 · <span class="text-brand-blue font-semibold">Job C 측정</span></p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="bg-ink-900 text-white/50 text-xs">
+  <div class="max-w-[1400px] mx-auto px-6 py-8 flex flex-col sm:flex-row justify-between gap-2">
+    <span>CardFit 화면 설계 v0.1 · 모바일 앱 흐름 (CJM ③~⑦)</span>
+    <span>PRD·JTBD 원문 로직 준수 · 표시 금액은 목업 예시값</span>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.acc .head').forEach(function(b){
+    b.addEventListener('click', function(){ b.closest('.acc').classList.toggle('open'); });
+  });
+</script>
+</body>
+</html>
